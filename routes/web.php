@@ -25,3 +25,4 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/entidades-registradas', 'EntidadeController@index')->name('entidadesRegistradas');
 Route::post('/registrar-nueva-entidad', 'EntidadeController@storeNewEntidad')->name('storeNewEntidad');
 Route::post('/registrar-nuevo-atributo', 'EntidadeController@storeNewAtributo')->name('storeNewAtributo');
+Route::post('/borrar-entidad-existente', 'EntidadeController@borrarEntidadExistente')->name('borrarEntidadExistente');

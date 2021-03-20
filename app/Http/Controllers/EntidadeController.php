@@ -55,4 +55,20 @@ class EntidadeController extends Controller
         return response()->json(['error' => 'Hubo un error']);
     }
 
+    public function borrarEntidadExistente(Request $request)
+    {
+        if ( !empty( $request->input('entidad_id') ) ) {
+            $entidad_existente = Entidade::where('id', $request->input('entidad_id'))->first();
+            $entidad = $entidad_existente;
+            $entidad_existente->delete();
+
+            $bitacora = new Bitacora();
+            $bitacora->suceso = "Se borró exitosamente la entidad: ".$entidad;
+            $bitacora->save();
+
+            return response()->json(['entidad_borrada' => $entidad]);
+        }
+        return response()->json(['error' => 'Hubo un error']);
+    }
+
 }

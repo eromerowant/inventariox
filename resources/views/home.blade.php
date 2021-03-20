@@ -33,7 +33,7 @@
                   <form>
                     <div class="form-group">
                       <label for="formGroupExampleInput">Nombre de la Entidad:</label>
-                      <input @keyup="findEntidad" v-model="buscarNombreEntidad" type="text" class="form-control" placeholder="Buscar...">
+                      <input @keyup.prevent="findEntidad" v-model="buscarNombreEntidad" type="text" class="form-control" placeholder="Buscar...">
                     </div>
                   </form>
                 </div>
@@ -41,7 +41,7 @@
                 <div class="row">
                   <!-- entidad REGISTRADA -->
                   <ul v-if="nombreExisteEnRegistroDeEntidades">
-                    <li v-for="(producto, index) in nombreDeEntidadesRegistradas" :key="index">
+                    <li v-for="(producto, index) in nombresDeEntidadesRegistradas" :key="index">
                       <a href="#" @click.prevent="verEntidadRegistrada(producto)">
                         Ver <strong>@{{ producto.nombreEntidad }}</strong>
                       </a>
@@ -116,7 +116,7 @@
                           <input v-model="newEntidad.nombreEntidad" type="text" class="form-control text-center" readonly>
                           <div class="input-group-append">
                             <a href="#" class="btn btn-outline-info btn-sm"><i class="fas fa-edit"></i></a>
-                            <a @click.prevent="removeProductNameRegistered(newEntidad.nombreEntidad)" href="#" class="btn btn-outline-danger btn-sm"><i class="fas fa-times-circle"></i></a>
+                            <a @click.prevent="removeProductNameRegistered(newEntidad.nombreEntidad, newEntidad.id)" href="#" class="btn btn-outline-danger btn-sm"><i class="fas fa-times-circle"></i></a>
                           </div>
                         </div>
                       </div>
@@ -350,7 +350,7 @@
                 atributoEnModoEdicion: false,
         
                 nombreExisteEnRegistroDeEntidades: false,
-                nombreDeEntidadesRegistradas: [],
+                nombresDeEntidadesRegistradas: [],
                 agregarNuevoNombreDeEntidad: false,
                 agregarNombreDeEntidadExistente: false,
                 atributoNoValidoParaSerAgregado: false,
@@ -379,7 +379,7 @@
                         nombres.push(entidad);
                     }
                     })
-                    this.nombreDeEntidadesRegistradas = nombres;
+                    this.nombresDeEntidadesRegistradas = nombres;
                     this.nombreExisteEnRegistroDeEntidades = existe;
                 } else {
                     this.nombreExisteEnRegistroDeEntidades = false;
@@ -483,14 +483,24 @@
                 })
             },
 
-            removeProductNameRegistered(nombre){
+            removeProductNameRegistered(nombre, id){
+              this.borrarEntidadExistenteEnBaseDeDatos(id);
                 this.registroDeEntidades = this.registroDeEntidades.filter(producto => producto.nombreEntidad !== nombre);
-                this.nombreDeEntidadesRegistradas = this.nombreDeEntidadesRegistradas.filter(producto => producto.nombreEntidad !== nombre);
+                this.nombresDeEntidadesRegistradas = this.nombresDeEntidadesRegistradas.filter(producto => producto.nombreEntidad !== nombre);
                 this.newEntidad = {
                     nombreEntidad: '',
                     atributos: []
                 };
                 this.agregarNombreDeEntidadExistente = false;
+            },
+
+            borrarEntidadExistenteEnBaseDeDatos(entidad_id){
+              axios.post( "{{route('borrarEntidadExistente')}}", {"entidad_id": entidad_id})
+                .then(res => {
+                  console.log(res.data);
+                }).catch(err => {
+                console.log(err)
+              })
             },
 
             validarComprarRealizada(){
