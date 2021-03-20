@@ -12,6 +12,9 @@
     <!-- VUEJS -->
     <script src="https://unpkg.com/vue@next"></script>
 
+    {{-- AXIOS --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous"></script>
+
     <!-- Custom styles for this template-->
     <link href="{{asset('plantilla/css/sb-admin-2.min.css')}}" rel="stylesheet">
 
@@ -23,7 +26,7 @@
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
+            <div class="container-fluid">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>

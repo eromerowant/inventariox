@@ -2,84 +2,57 @@
 
 namespace App\Http\Controllers;
 
+use App\Bitacora;
 use App\Entidade;
 use Illuminate\Http\Request;
 
 class EntidadeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        //
+        $entidades_existentes = Entidade::all();
+        return response()->json(['entidades_registradas' => $entidades_existentes]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function storeNewEntidad(Request $request)
     {
-        //
+        if (!empty($request->input('nombre_entidad'))) {
+            //revisamos la base de datos 
+            $entidades_existentes = Entidade::all();
+
+            foreach ($entidades_existentes as $key => $value) {
+                if ($value->nombre === $request->input('nombre_entidad')) {
+                    return response()->json(['entidad_existente' => $value]);
+                }
+            }
+            $entidad = new Entidade();
+            $entidad->nombre = $request->input('nombre_entidad');
+            $entidad->atributos = "[]";
+            $entidad->save();
+
+            $bitacora = new Bitacora();
+            $bitacora->suceso = "Se agregó una nueva entidad con id: ".$entidad->id;
+            $bitacora->save();
+            return response()->json(['entidad_agregada' => $entidad]);
+        }
+        return response()->json(['error' => 'Hubo un error']);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function storeNewAtributo(Request $request)
     {
-        //
+        if (!empty($request->input('entidad_id'))) {
+            $entidad_existente = Entidade::where('id', $request->input('entidad_id'))->first();
+            $entidad_existente->atributos = $request->input('atributos');
+            $entidad_existente->update();
+
+            $bitacora = new Bitacora();
+            $bitacora->suceso = "Se actualizaron los atributos de la entidad con id: ".$entidad_existente->id;
+            $bitacora->save();
+
+            return response()->json(['respuesta' => "atributos actualizados en la entidad con ID: ".$entidad_existente->id]);
+        }
+        return response()->json(['error' => 'Hubo un error']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Entidade  $entidade
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Entidade $entidade)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Entidade  $entidade
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Entidade $entidade)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Entidade  $entidade
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Entidade $entidade)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Entidade  $entidade
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Entidade $entidade)
-    {
-        //
-    }
 }

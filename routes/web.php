@@ -20,3 +20,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+//Entidades
+Route::get('/entidades-registradas', 'EntidadeController@index')->name('entidadesRegistradas');
+Route::post('/registrar-nueva-entidad', 'EntidadeController@storeNewEntidad')->name('storeNewEntidad');
+Route::post('/registrar-nuevo-atributo', 'EntidadeController@storeNewAtributo')->name('storeNewAtributo');

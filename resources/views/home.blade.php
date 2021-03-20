@@ -7,7 +7,7 @@
       <div id="appVue">
 
         <!-- Begin Page Content -->
-        <div class="container">
+        <div class="container-fluid">
 
           <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
@@ -25,38 +25,45 @@
             <!-- CONFIGURACION CONTENT -->
             <div class="container-fluid">
               <!-- Page Heading -->
-              <div class="d-sm-flex align-items-center justify-content-between m-3">
-                <h1 class="h3 mb-0 text-gray-800 text-center">Configuración</h1>
-              </div>
+
 
             
               
-                <div class="row">
+                <div class="row mt-3">
                   <form>
                     <div class="form-group">
-                      <label for="formGroupExampleInput">Nombre del Producto</label>
-                      <input @keyup="findProduct" v-model="buscarNombreProducto" type="text" class="form-control" placeholder="Buscar...">
+                      <label for="formGroupExampleInput">Nombre de la Entidad:</label>
+                      <input @keyup="findEntidad" v-model="buscarNombreEntidad" type="text" class="form-control" placeholder="Buscar...">
                     </div>
                   </form>
                 </div>
                 <!-- VISTA UNO -->
                 <div class="row">
-                  <!-- producto REGISTRADO -->
-                  <ul v-if="productoEnRegistroDePlantillas">
-                    <li v-for="(producto, index) in nombreDeProductosRegistrados" :key="index">
-                      <a href="#" @click.prevent="verProductoRegistrado(producto)">
-                        Ver <strong>@{{ producto.nombreProducto }}</strong>
+                  <!-- entidad REGISTRADA -->
+                  <ul v-if="nombreExisteEnRegistroDeEntidades">
+                    <li v-for="(producto, index) in nombreDeEntidadesRegistradas" :key="index">
+                      <a href="#" @click.prevent="verEntidadRegistrada(producto)">
+                        Ver <strong>@{{ producto.nombreEntidad }}</strong>
                       </a>
                     </li>
                   </ul>
-                  <!-- /producto REGISTRADO -->
-                  <!-- producto NUEVO -->
-                  <div v-else-if="!productoEnRegistroDePlantillas && buscarNombreProducto.length > 2">
+                  <!-- /entidad REGISTRADA -->
+                  <!-- entidad NUEVA -->
+                  <div v-else-if="!nombreExisteEnRegistroDeEntidades && buscarNombreEntidad.length > 2">
                     <a @click.prevent="verProductoNuevo" href="#">
-                      <p>Registrar <strong>@{{ buscarNombreProducto }}</strong> como nuevo nombre de producto</p>
+                      <p>Registrar <strong>@{{ buscarNombreEntidad }}</strong> como nuevo nombre de entidad</p>
                     </a>
                   </div>
-                  <!-- /producto NUEVO -->
+                  <!-- /entidad NUEVA -->
+                  {{-- TODO --}}
+                  <ul v-else>
+                    <li v-for="(producto, index) in registroDeEntidades" :key="producto.id">
+                      <a href="#" @click.prevent="verEntidadRegistrada(producto)">
+                        Ver <strong>@{{ producto.nombreEntidad }}</strong>
+                      </a>
+                    </li>
+                  </ul>
+                  {{-- /TODO --}}
                 </div>
                 <!-- /VISTA UNO -->
                 
@@ -64,11 +71,11 @@
                 <!-- VISTA DOS -->
                 <div class="row">
                   <div class="col-md-10 offset-md-1 text-center">
-                    <!-- PRODUCTO NUEVO -->
-                    <form v-if="agregarNuevoNombreDeProducto">
+                    <!-- ENTIDAD NUEVA -->
+                    <form v-if="agregarNuevoNombreDeEntidad">
                       <div class="form-group text-center">
-                        <label class="text-center">Nuevo Nombre del Producto</label>
-                        <input v-model="newProducto.nombreProducto" type="text" class="form-control text-center" readonly>
+                        <label class="text-center">Nuevo Nombre de la entidad</label>
+                        <input v-model="newEntidad.nombreEntidad" type="text" class="form-control text-center" readonly>
                       </div>
                       <h5 class="text-center">Atributos</h5>
                       <div class="form-group text-center">
@@ -85,31 +92,31 @@
                       </div>
 
                       <div class="form-row">
-                        <div class="form-col" v-for="(atributo, index) in newProducto.atributos" :key="index">
-                          <!-- TARJETAS - producto registrado -->
+                        <div class="form-col" v-for="(atributo, index) in newEntidad.atributos" :key="index">
+                          <!-- TARJETAS - entidad registrada -->
                           <tarjeta-de-atributo 
                             :atributo="atributo"
                             :remove-atributo="removeAtributo"
                             @new-valor="handleNewValor"
                             @remove-valor="removeIncomingValue"
                           />
-                          <!-- /TARJETAS - producto registrado -->
+                          <!-- /TARJETAS - entidad registrada -->
                         </div>
                       </div>
 
                       
                     </form>
-                    <!-- /PRODUCTO NUEVO -->
+                    <!-- /ENTIDAD NUEVA -->
       
-                    <!-- PRODUCTO REGISTRADO -->
-                    <form v-else-if="agregarNombreDeProductoExistente">
+                    <!-- ENTIDAD REGISTRADA -->
+                    <form v-else-if="agregarNombreDeEntidadExistente">
                       <div class="form-group text-center">
                         <label class="sr-only">Nombre del Atributo Nuevo</label>
                         <div class="input-group mb-2">
-                          <input v-model="newProducto.nombreProducto" type="text" class="form-control text-center" readonly>
+                          <input v-model="newEntidad.nombreEntidad" type="text" class="form-control text-center" readonly>
                           <div class="input-group-append">
                             <a href="#" class="btn btn-outline-info btn-sm"><i class="fas fa-edit"></i></a>
-                            <a @click.prevent="removeProductNameRegistered(newProducto.nombreProducto)" href="#" class="btn btn-outline-danger btn-sm"><i class="fas fa-times-circle"></i></a>
+                            <a @click.prevent="removeProductNameRegistered(newEntidad.nombreEntidad)" href="#" class="btn btn-outline-danger btn-sm"><i class="fas fa-times-circle"></i></a>
                           </div>
                         </div>
                       </div>
@@ -127,22 +134,22 @@
                       </div>
 
                       <div class="form-row">
-                        <div class="form-col" v-for="(atributo, index) in newProducto.atributos" :key="index">
-                          <!-- TARJETAS - producto registrado -->
+                        <div class="form-col" v-for="(atributo, index) in newEntidad.atributos" :key="index">
+                          <!-- TARJETAS - entidad registrada -->
                           <tarjeta-de-atributo 
                             :atributo="atributo"
                             :remove-atributo="removeAtributo"
                             @new-valor="handleNewValor"
                             @remove-valor="removeIncomingValue"
                           />
-                          <!-- /TARJETAS - producto registrado -->
+                          <!-- /TARJETAS - entidad registrada -->
                         </div>
                       </div>
 
 
                       
                     </form>
-                    <!-- /PRODUCTO REGISTRADO -->
+                    <!-- /ENTIDAD REGISTRADA -->
                   </div>
                 </div>
                 <!-- /VISTA DOS -->
@@ -154,11 +161,8 @@
             <div class="tab-pane fade" id="compras" role="tabpanel" aria-labelledby="compras-tab">
               <!-- COMPRAS-CONTENT -->
               <div class="container-fluid m-3">
-                <div class="row">
-                  <h3 class="text-center">Compras</h3>
-                </div>
 
-                <div class="row">
+                <div class="row mt-3">
                   <div class="col">
                     <form>
                       <div class="row">
@@ -167,9 +171,9 @@
                             <label for="exampleFormControlSelect1">Selecciona el Producto:</label>
                             <select v-model="formCompra.productoSeleccionadoParaComprar" class="form-control" required>
                               <option value="">--Seleccione--</option>
-                              <option v-for="(producto, index) in registroDePlantillas" 
-                                :value="producto.nombreProducto"
-                              >@{{ producto.nombreProducto }}</option>
+                              <option v-for="(producto, index) in registroDeEntidades" 
+                                :value="producto.nombreEntidad"
+                              >@{{ producto.nombreEntidad }}</option>
                             </select>
                           </div>
                         </div>
@@ -279,35 +283,29 @@
               </div>
             </div>
 
-
-
               <!-- /COMPRAS-CONTENT -->
             </div>
 
             <div class="tab-pane fade" id="inventario" role="tabpanel" aria-labelledby="inventario-tab">-inventario content-</div>
           </div>
 
-
-
-            
-
-
-
-          
-
         </div>
         <!-- /.container-fluid -->
-
 
       </div>
       <!-- /VUEJS -->
 
-
-
-
-
-   
 @endsection
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -320,26 +318,27 @@
         data() {
             return {
 
-                registroDePlantillas: [
+                registroDeEntidades: [
                     {
-                    nombreProducto: 'Pestaña',
-                    atributos: [
-                        {
-                            nombre: 'Medida',
-                            valores: ['0.05', '0.07', '0.20']
-                        },
-                        {
-                            nombre: 'Color',
-                            valores: ['Rojo', 'Negro', 'Transparente']
-                        }
-                    ],
+                      nombreEntidad: 'Pestaña',
+                      atributos: [
+                          {
+                              nombre: 'Medida',
+                              valores: ['0.05', '0.07', '0.20']
+                          },
+                          {
+                              nombre: 'Color',
+                              valores: ['Rojo', 'Negro', 'Transparente']
+                          }
+                      ],
                     }
                 ],
         
-                buscarNombreProducto: "",
+                buscarNombreEntidad: "",
         
-                newProducto: {
-                    nombreProducto: '',
+                newEntidad: {
+                    id: null,
+                    nombreEntidad: '',
                     atributos: []
                 },
         
@@ -350,10 +349,10 @@
         
                 atributoEnModoEdicion: false,
         
-                productoEnRegistroDePlantillas: false,
-                nombreDeProductosRegistrados: [],
-                agregarNuevoNombreDeProducto: false,
-                agregarNombreDeProductoExistente: false,
+                nombreExisteEnRegistroDeEntidades: false,
+                nombreDeEntidadesRegistradas: [],
+                agregarNuevoNombreDeEntidad: false,
+                agregarNombreDeEntidadExistente: false,
                 atributoNoValidoParaSerAgregado: false,
         
                 formCompra: {
@@ -370,38 +369,51 @@
         },
 
         methods: {
-            findProduct() {
-                if (this.buscarNombreProducto.length > 2) {
+            findEntidad() {
+                if (this.buscarNombreEntidad.length > 2) {
                     let existe = false;
                     let nombres = [];
-                    this.registroDePlantillas.map(producto => {
-                    if ( ( producto.nombreProducto.toLowerCase() ).includes( (this.buscarNombreProducto).toLowerCase() ) ) {
+                    this.registroDeEntidades.map(entidad => {
+                    if ( ( entidad.nombreEntidad.toLowerCase() ).includes( (this.buscarNombreEntidad).toLowerCase() ) ) {
                         existe = true;
-                        nombres.push(producto);
+                        nombres.push(entidad);
                     }
                     })
-                    this.nombreDeProductosRegistrados = nombres;
-                    this.productoEnRegistroDePlantillas = existe;
+                    this.nombreDeEntidadesRegistradas = nombres;
+                    this.nombreExisteEnRegistroDeEntidades = existe;
                 } else {
-                    this.productoEnRegistroDePlantillas = false;
-                    this.agregarNuevoNombreDeProducto = false;
-                    this.agregarNombreDeProductoExistente = false;
-                    this.newProducto = {
-                    nombreProducto: '',
+                    this.nombreExisteEnRegistroDeEntidades = false;
+                    this.agregarNuevoNombreDeEntidad = false;
+                    this.agregarNombreDeEntidadExistente = false;
+                    this.newEntidad = {
+                    nombreEntidad: '',
                     atributos: []
                     };
                 }
             },
 
-            verProductoRegistrado(producto){
-                this.newProducto = producto;
-                this.agregarNombreDeProductoExistente = true;
+            verEntidadRegistrada(nombre){
+                this.newEntidad = nombre;
+                this.agregarNombreDeEntidadExistente = true;
             },
 
             verProductoNuevo(){
-                this.newProducto.nombreProducto = this.buscarNombreProducto;
-                this.agregarNuevoNombreDeProducto = true;
-                this.registroDePlantillas.push(this.newProducto);
+                this.newEntidad.nombreEntidad = this.buscarNombreEntidad;
+                this.agregarNuevoNombreDeEntidad = true;
+                this.registroDeEntidades.push(this.newEntidad);
+                this.registrarNuevaEntidadEnBaseDeDatos(this.newEntidad.nombreEntidad);
+            },
+
+            registrarNuevaEntidadEnBaseDeDatos(nuevo_nombre_entidad){
+              axios.post( "{{route('storeNewEntidad')}}", {'nombre_entidad': nuevo_nombre_entidad})
+                .then(res => {
+                  if (res.data.entidad_agregada) {
+                    this.newEntidad.id = res.data.entidad_agregada.id;
+                  }
+                })
+                .catch(err => {
+                console.log(err)
+              })
             },
 
             handleNewAtributo(){
@@ -420,8 +432,8 @@
             },
 
             atributoValido(nombre){
-                for (let i = 0; i < this.newProducto.atributos.length; i++) {
-                    if (this.newProducto.atributos[i].nombre === nombre) {
+                for (let i = 0; i < this.newEntidad.atributos.length; i++) {
+                    if (this.newEntidad.atributos[i].nombre === nombre) {
                     return false;
                     }
                 }
@@ -429,19 +441,34 @@
             },
 
             addNewAtributoValido(nombre){
-                this.newProducto.atributos.push({
+                this.newEntidad.atributos.push({
                     nombre: nombre,
                     valores: []
                 });
+                this.addNewAtributoABaseDeDatos(this.newEntidad.id, this.newEntidad.atributos);
                 this.newAtributo.nombre = "";
             },
 
+            addNewAtributoABaseDeDatos(entidad_id, atributos){
+              let obj = {
+                entidad_id: entidad_id,
+                atributos: JSON.stringify(atributos),
+              }
+              axios.post( "{{route('storeNewAtributo')}}", obj)
+                .then(res => {
+                  console.log(res.data);
+                })
+                .catch(err => {
+                console.log(err)
+              })
+            },
+
             removeAtributo(name){
-                this.newProducto.atributos = this.newProducto.atributos.filter(atributo => atributo.nombre !== name);
+                this.newEntidad.atributos = this.newEntidad.atributos.filter(atributo => atributo.nombre !== name);
             },
 
             handleNewValor(request){
-                this.newProducto.atributos.map(atributo => {
+                this.newEntidad.atributos.map(atributo => {
                     if (atributo.nombre === request.atributoNombre) {
                     atributo.valores.push(request.newValor);
                     }
@@ -449,7 +476,7 @@
             },
 
             removeIncomingValue(request){
-                this.newProducto.atributos.map(atributo => {
+                this.newEntidad.atributos.map(atributo => {
                     if (atributo.nombre === request.atributo) {
                     atributo.valores = atributo.valores.filter(valor => valor !== request.value)
                     }
@@ -457,13 +484,13 @@
             },
 
             removeProductNameRegistered(nombre){
-                this.registroDePlantillas = this.registroDePlantillas.filter(producto => producto.nombreProducto !== nombre);
-                this.nombreDeProductosRegistrados = this.nombreDeProductosRegistrados.filter(producto => producto.nombreProducto !== nombre);
-                this.newProducto = {
-                    nombreProducto: '',
+                this.registroDeEntidades = this.registroDeEntidades.filter(producto => producto.nombreEntidad !== nombre);
+                this.nombreDeEntidadesRegistradas = this.nombreDeEntidadesRegistradas.filter(producto => producto.nombreEntidad !== nombre);
+                this.newEntidad = {
+                    nombreEntidad: '',
                     atributos: []
                 };
-                this.agregarNombreDeProductoExistente = false;
+                this.agregarNombreDeEntidadExistente = false;
             },
 
             validarComprarRealizada(){
@@ -493,14 +520,30 @@
 
             handleCompraRegistrada(id){
                 this.comprasRegistradas = this.comprasRegistradas.filter(compra => compra.id !== id);
+            },
+
+            traerTodasLasEntidadesRegistradasDeBaseDeDatos(){
+              axios.get( "{{route('entidadesRegistradas')}}")
+                .then(res => {
+                    res.data.entidades_registradas.forEach(entidad_registrada => {
+                      let nueva_entidad = {
+                        id: entidad_registrada.id,
+                        nombreEntidad: entidad_registrada.nombre,
+                        atributos: JSON.parse(entidad_registrada.atributos),
+                      }
+                      this.registroDeEntidades.push(nueva_entidad);
+                    })
+                }).catch(err => {
+                console.log(err)
+              })
             }
         }, // end methods
 
 
         watch: {
-            newProducto: function(newVal) {
-                this.registroDePlantillas = this.registroDePlantillas.map(producto => {
-                    if (producto.nombreProducto === this.newProducto.nombreProducto) {
+            newEntidad: function(newVal) {
+                this.registroDeEntidades = this.registroDeEntidades.map(producto => {
+                    if (producto.nombreEntidad === this.newEntidad.nombreEntidad) {
                     return newVal;
                     }
                     return producto;
@@ -514,7 +557,7 @@
                 if (this.formCompra.productoSeleccionadoParaComprar === "") {
                     return [];
                 }
-                let producto = this.registroDePlantillas.filter(producto => producto.nombreProducto === this.formCompra.productoSeleccionadoParaComprar);
+                let producto = this.registroDeEntidades.filter(producto => producto.nombreEntidad === this.formCompra.productoSeleccionadoParaComprar);
                 response = producto.map(producto => producto.atributos);
                 return response[0];
             },
@@ -527,7 +570,11 @@
                 this.formCompra.costoPorUnidad = response;
                 return response;
             }
-        }
+        },
+
+        mounted: function() {
+          this.traerTodasLasEntidadesRegistradasDeBaseDeDatos();
+        },
 
         })
 
