@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use App\Bitacora;
 use App\Entidade;
 use Illuminate\Http\Request;
@@ -32,7 +33,8 @@ class EntidadeController extends Controller
             $entidad->save();
 
             $bitacora = new Bitacora();
-            $bitacora->suceso = "Se agregó una nueva entidad con id: ".$entidad->id;
+            $el_usuario =  "el usuario: ".Auth::user()->name." con ID: ".Auth::user()->id;
+            $bitacora->suceso = $el_usuario." agregó una nueva entidad con id: ".$entidad->id;
             $bitacora->save();
             return response()->json(['entidad_agregada' => $entidad]);
         }
@@ -47,7 +49,8 @@ class EntidadeController extends Controller
             $entidad_existente->update();
 
             $bitacora = new Bitacora();
-            $bitacora->suceso = "Se actualizaron los atributos de la entidad con id: ".$entidad_existente->id;
+            $el_usuario =  "el usuario: ".Auth::user()->name." con ID: ".Auth::user()->id;
+            $bitacora->suceso = $el_usuario." actualizó los atributos de la entidad con id: ".$entidad_existente->id;
             $bitacora->save();
 
             return response()->json(['respuesta' => "atributos actualizados en la entidad con ID: ".$entidad_existente->id]);
@@ -63,10 +66,28 @@ class EntidadeController extends Controller
             $entidad_existente->delete();
 
             $bitacora = new Bitacora();
-            $bitacora->suceso = "Se borró exitosamente la entidad: ".$entidad;
+            $el_usuario =  "el usuario: ".Auth::user()->name." con ID: ".Auth::user()->id;
+            $bitacora->suceso = $el_usuario." borró exitosamente la entidad: ".$entidad;
             $bitacora->save();
 
             return response()->json(['entidad_borrada' => $entidad]);
+        }
+        return response()->json(['error' => 'Hubo un error']);
+    }
+
+    public function updateAtributosDeEntidad(Request $request)
+    {
+        if ( !empty( $request->input('entidad_id') ) ) {
+            $entidad_existente = Entidade::where('id', $request->input('entidad_id'))->first();
+            $entidad_existente->atributos = $request->input('atributos');
+            $entidad_existente->update();
+
+            $bitacora = new Bitacora();
+            $el_usuario =  "el usuario: ".Auth::user()->name." con ID: ".Auth::user()->id;
+            $bitacora->suceso = $el_usuario." actualizó los atributos de la entidad con id: ".$entidad_existente;
+            $bitacora->save();
+
+            return response()->json(['atributos_actualizados_en_entidad' => $entidad_existente]);
         }
         return response()->json(['error' => 'Hubo un error']);
     }

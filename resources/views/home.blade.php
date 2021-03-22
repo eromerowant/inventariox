@@ -50,7 +50,7 @@
                   <!-- /entidad REGISTRADA -->
                   <!-- entidad NUEVA -->
                   <div v-else-if="!nombreExisteEnRegistroDeEntidades && buscarNombreEntidad.length > 2">
-                    <a @click.prevent="verProductoNuevo" href="#">
+                    <a @click.prevent="verNuevoNombreDeEntidad" href="#">
                       <p>Registrar <strong>@{{ buscarNombreEntidad }}</strong> como nuevo nombre de entidad</p>
                     </a>
                   </div>
@@ -169,7 +169,7 @@
                         <div class="col">
                           <div class="form-group">
                             <label for="exampleFormControlSelect1">Selecciona el Producto:</label>
-                            <select v-model="formCompra.productoSeleccionadoParaComprar" class="form-control" required>
+                            <select v-model="formCompra.nombreDeEntidadSeleccionadaParaComprar" class="form-control" required>
                               <option value="">--Seleccione--</option>
                               <option v-for="(producto, index) in registroDeEntidades" 
                                 :value="producto.nombreEntidad"
@@ -192,7 +192,7 @@
                       <div class="row">
                         <div class="col">
                           <div class="form-group">
-                            <label>Cantidad</label>
+                            <label>Cantidad de Unidades</label>
                             <input v-model="formCompra.cantidadItemsEnCompra" type="number" class="form-control" required>
                           </div>
                         </div>
@@ -208,6 +208,22 @@
                           <div class="form-group">
                             <label>Monto Unitario (c/u)</label>
                             <input v-model="costoUnitario" type="number" class="form-control" readonly>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group">
+                            <label>Precio Sugerido (c/u)</label>
+                            <input v-model="formCompra.precioSugerido" type="number" class="form-control" required>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group">
+                            <label>Ingrese el enlace completo al sitio donde se realizó la compra:</label>
+                            <input v-model="formCompra.enlaceURLDeLaCompra" type="text" class="form-control" placeholder="Ejemplo: https://www.proveedor.com" required>
                           </div>
                         </div>
                       </div>
@@ -235,49 +251,68 @@
                   <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                       <tr>
-                        <th>ID</th>
-                        <th>Producto</th>
-                        <th>Características</th>
-                        <th>Cantidad</th>
-                        <th>Costo Total</th>
-                        <th>Costo Unitario</th>
-                        <th>Fecha</th>
-                        <th>Status</th>
-                        <th>Acciones</th>
+                        <th class="text-center">ID</th>
+                        <th class="text-center">Producto(s)</th>
+                        <th class="text-center">Cantidad</th>
+                        <th class="text-center">Características</th>
+                        <th class="text-center">Costo Total</th>
+                        <th class="text-center">Costo Unitario</th>
+                        <th class="text-center">Fecha</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Acciones</th>
                       </tr>
                     </thead>
-                    <tfoot>
-                      <tr>
-                        <th>ID</th>
-                        <th>Producto</th>
-                        <th>Características</th>
-                        <th>Cantidad</th>
-                        <th>Costo Total</th>
-                        <th>Costo Unitario</th>
-                        <th>Fecha</th>
-                        <th>Status</th>
-                        <th>Acciones</th>
-                      </tr>
-                    </tfoot>
                     <tbody>
                       <tr v-for="(compra, index) in comprasRegistradas">
-                        <td>@{{ compra.id }}</td>
-                        <td>@{{ compra.productoSeleccionadoParaComprar }}</td>
-                        <td>
-                          <ul v-for="(valor, atributo) in compra.atributos">
-                            <li>@{{ atributo }}: @{{ valor }}</li>
+                        <td class="text-center">
+                          <a target="_blank" :href="compra.enlace_url ? compra.enlace_url : '#'">
+                            @{{ compra.id }}
+                          </a>
+                        </td>
+
+                        <td class="text-center">
+                          <ul v-for="(producto, index) in compra.productos">
+                            <li>@{{ producto.ejemplar.nombre }} (id: @{{ producto.id }})</li>
                           </ul>
                         </td>
-                        <td>@{{ compra.cantidadItemsEnCompra }}</td>
-                        <td>@{{ compra.montoTotalPagado }}</td>
-                        <td>@{{ compra.costoPorUnidad }}</td>
-                        <td>@{{ compra.fecha }}</td>
-                        <td>@{{ compra.status }}</td>
-                        <td>
-                          <a @click.prevent="handleCompraRegistrada(compra.id)" class="btn btn-outline-danger btn-sm" href="#">Eliminar</a>
+
+                        <td class="text-center">
+                          @{{compra.productos.length}} Unidades
+                        </td>
+
+                        <td class="text-center">
+                          <ul v-for="(valor, atributo) in compra.productos[0].ejemplar.atributos">
+                            <li>@{{ atributo }} - @{{ valor }}</li>
+                          </ul>
+                        </td>
+
+                        <td class="text-center">@{{ compra.precio_total }}</td>
+
+                        <td class="text-center">@{{ compra.productos[0].costo_unitario }}</td>
+
+                        <td class="text-center">@{{ compra.created_at }}</td>
+                        
+                        <td class="text-center">@{{ compra.status }}</td>
+
+                        <td class="text-center">
+                          <a @click.prevent="eliminarCompra(compra.id)" class="btn btn-outline-danger btn-sm" href="#">Eliminar</a>
                         </td>
                       </tr>
                     </tbody>
+                    <tfoot>
+                      <tr>
+                        <th class="text-center">ID</th>
+                        <th class="text-center">Producto(s)</th>
+                        <th class="text-center">Cantidad</th>
+                        <th class="text-center">Características</th>
+                        <th class="text-center">Costo Total</th>
+                        <th class="text-center">Costo Unitario</th>
+                        <th class="text-center">Fecha</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Acciones</th>
+                      </tr>
+                    </tfoot>
+
                   </table>
                 </div>
               </div>
@@ -313,26 +348,26 @@
     <script type="text/javascript">
         const {createApp} = Vue;
 
+        let ejemplo_de_entidad = {
+          nombreEntidad: 'Pestaña',
+          atributos: [
+              {
+                  nombre: 'Medida',
+                  valores: ['0.05', '0.07', '0.20']
+              },
+              {
+                  nombre: 'Color',
+                  valores: ['Rojo', 'Negro', 'Transparente']
+              }
+          ],
+        };
+
         const application = createApp({
         el: '#appVue',
         data() {
             return {
 
-                registroDeEntidades: [
-                    {
-                      nombreEntidad: 'Pestaña',
-                      atributos: [
-                          {
-                              nombre: 'Medida',
-                              valores: ['0.05', '0.07', '0.20']
-                          },
-                          {
-                              nombre: 'Color',
-                              valores: ['Rojo', 'Negro', 'Transparente']
-                          }
-                      ],
-                    }
-                ],
+                registroDeEntidades: [], // esto se llena desde la base de datos (source of truth)
         
                 buscarNombreEntidad: "",
         
@@ -356,10 +391,12 @@
                 atributoNoValidoParaSerAgregado: false,
         
                 formCompra: {
-                    productoSeleccionadoParaComprar: "",
+                    nombreDeEntidadSeleccionadaParaComprar: "",
                     cantidadItemsEnCompra: null,
                     montoTotalPagado: null,
                     costoPorUnidad: null,
+                    precioSugerido: null,
+                    enlaceURLDeLaCompra: null,
                     atributos: {}
                 },
         
@@ -397,7 +434,7 @@
                 this.agregarNombreDeEntidadExistente = true;
             },
 
-            verProductoNuevo(){
+            verNuevoNombreDeEntidad(){
                 this.newEntidad.nombreEntidad = this.buscarNombreEntidad;
                 this.agregarNuevoNombreDeEntidad = true;
                 this.registroDeEntidades.push(this.newEntidad);
@@ -445,26 +482,26 @@
                     nombre: nombre,
                     valores: []
                 });
-                this.addNewAtributoABaseDeDatos(this.newEntidad.id, this.newEntidad.atributos);
                 this.newAtributo.nombre = "";
             },
 
-            addNewAtributoABaseDeDatos(entidad_id, atributos){
+            removeAtributo(name){
+                this.newEntidad.atributos = this.newEntidad.atributos.filter(atributo => atributo.nombre !== name);
+            },
+
+            updateAtributosInDataBase(entidad){
               let obj = {
-                entidad_id: entidad_id,
-                atributos: JSON.stringify(atributos),
+                entidad_id: entidad.id,
+                atributos: JSON.stringify(entidad.atributos),
               }
-              axios.post( "{{route('storeNewAtributo')}}", obj)
+
+              axios.post( "{{route('updateAtributosDeEntidad')}}", obj)
                 .then(res => {
                   console.log(res.data);
                 })
                 .catch(err => {
                 console.log(err)
               })
-            },
-
-            removeAtributo(name){
-                this.newEntidad.atributos = this.newEntidad.atributos.filter(atributo => atributo.nombre !== name);
             },
 
             handleNewValor(request){
@@ -488,8 +525,9 @@
                 this.registroDeEntidades = this.registroDeEntidades.filter(producto => producto.nombreEntidad !== nombre);
                 this.nombresDeEntidadesRegistradas = this.nombresDeEntidadesRegistradas.filter(producto => producto.nombreEntidad !== nombre);
                 this.newEntidad = {
-                    nombreEntidad: '',
-                    atributos: []
+                  id: null,
+                  nombreEntidad: '',
+                  atributos: []
                 };
                 this.agregarNombreDeEntidadExistente = false;
             },
@@ -503,33 +541,45 @@
               })
             },
 
-            validarComprarRealizada(){
-                let response = false;
-                if (condition) {
-                    
-                }
-                return response;
+            handleNuevaCompra(){
+              this.registrarNuevaCompraEnBaseDeDatos(this.formCompra);
+              this.formCompra = {
+                  nombreDeEntidadSeleccionadaParaComprar: "",
+                  cantidadItemsEnCompra: null,
+                  montoTotalPagado: null,
+                  costoPorUnidad: null,
+                  precioSugerido: null,
+                  enlaceURLDeLaCompra: null,
+                  atributos: {}
+              };
+              setTimeout(() => {
+                this.traerTodasLasComprasRegistradasDeBaseDeDatos();
+              }, 1000);
             },
 
-            handleNuevaCompra(){
-                let nuevaCompra = {
-                    ...this.formCompra,
-                    id: Date.now(),
-                    fecha: new Date().toLocaleString(),
-                    status: 'Pendiente'
-                }
-                this.comprasRegistradas.push(nuevaCompra);
-                this.formCompra = {
-                    productoSeleccionadoParaComprar: "",
-                    cantidadItemsEnCompra: null,
-                    montoTotalPagado: null,
-                    costoPorUnidad: null,
-                    atributos: {}
-                };
+            registrarNuevaCompraEnBaseDeDatos(nueva_compra){
+              axios.post( "{{route('registrarNuevaCompra')}}", nueva_compra)
+                .then(res => {
+                  console.log(res.data);  
+                }).catch(err => {
+                console.log(err)
+              })
             },
 
             handleCompraRegistrada(id){
                 this.comprasRegistradas = this.comprasRegistradas.filter(compra => compra.id !== id);
+            },
+
+            eliminarCompra(id){
+              axios.post( "{{route('eliminarCompraRegistrada')}}", {compra_id: id})
+                .then(res => {
+                   console.log(res.data);
+                }).catch(err => {
+                console.log(err)
+              })
+              setTimeout(() => {
+                this.traerTodasLasComprasRegistradasDeBaseDeDatos();
+              }, 1000);
             },
 
             traerTodasLasEntidadesRegistradasDeBaseDeDatos(){
@@ -546,28 +596,46 @@
                 }).catch(err => {
                 console.log(err)
               })
-            }
+            },
+
+            traerTodasLasComprasRegistradasDeBaseDeDatos(){
+              axios.get( "{{route('comprasRegistradas')}}")
+                .then(res => {
+                  console.log(res.data.compras_registradas);
+                  this.comprasRegistradas = res.data.compras_registradas;
+                }).catch(err => {
+                console.log(err)
+              })
+            },
         }, // end methods
 
 
         watch: {
-            newEntidad: function(newVal) {
-                this.registroDeEntidades = this.registroDeEntidades.map(producto => {
+          newEntidad: {
+            deep: true,
+
+            handler(newVal){
+              this.registroDeEntidades = this.registroDeEntidades.map(producto => {
                     if (producto.nombreEntidad === this.newEntidad.nombreEntidad) {
                     return newVal;
                     }
                     return producto;
                 })
+                if (newVal.id !== undefined) {
+                  this.updateAtributosInDataBase(newVal);
+                }
             }
+          }
+
         }, // end watch
 
         computed: {
             atributosAMostrar(){
                 let response = [];
-                if (this.formCompra.productoSeleccionadoParaComprar === "") {
+                if (this.formCompra.nombreDeEntidadSeleccionadaParaComprar === "") {
                     return [];
                 }
-                let producto = this.registroDeEntidades.filter(producto => producto.nombreEntidad === this.formCompra.productoSeleccionadoParaComprar);
+                let producto = this.registroDeEntidades.filter(producto => producto.nombreEntidad === this.formCompra.nombreDeEntidadSeleccionadaParaComprar);
                 response = producto.map(producto => producto.atributos);
                 return response[0];
             },
@@ -584,6 +652,7 @@
 
         mounted: function() {
           this.traerTodasLasEntidadesRegistradasDeBaseDeDatos();
+          this.traerTodasLasComprasRegistradasDeBaseDeDatos();
         },
 
         })

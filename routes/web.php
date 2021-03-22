@@ -26,3 +26,8 @@ Route::get('/entidades-registradas', 'EntidadeController@index')->name('entidade
 Route::post('/registrar-nueva-entidad', 'EntidadeController@storeNewEntidad')->name('storeNewEntidad');
 Route::post('/registrar-nuevo-atributo', 'EntidadeController@storeNewAtributo')->name('storeNewAtributo');
 Route::post('/borrar-entidad-existente', 'EntidadeController@borrarEntidadExistente')->name('borrarEntidadExistente');
+Route::post('/actualizar-atributos-de-entidad', 'EntidadeController@updateAtributosDeEntidad')->name('updateAtributosDeEntidad');
+
+Route::get('/compras-registradas', 'CompraController@comprasRegistradas')->name('comprasRegistradas');
+Route::post('/registrar-nueva-compra', 'CompraController@registrarNuevaCompra')->name('registrarNuevaCompra');
+Route::post('/eliminar-compra-registrada', 'CompraController@eliminarCompraRegistrada')->name('eliminarCompraRegistrada');

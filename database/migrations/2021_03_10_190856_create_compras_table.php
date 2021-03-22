@@ -13,6 +13,8 @@ class CreateComprasTable extends Migration
 
             $table->integer('cantidad')->unsigned();
             $table->decimal('precio_total', 8, 2)->comment('xxXXXxxx.xx');
+            $table->string('status')->comment('1 es en espera. 2 es recibida')->default(1);
+            $table->string('enlace_url')->comment('enlace hacia el proveedor')->nullable();
 
             $table->timestamps();
         });

@@ -13,7 +13,7 @@ class Producto extends Model
 
     public function compra()
     {
-        return $this->hasOne(CompraProducto::class);
+        return $this->belongsTo(Compra::class);
     }
 
     public function pedido()

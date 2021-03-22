@@ -13,6 +13,6 @@ class Compra extends Model
 
     public function productos()
     {
-        return $this->hasMany(CompraProducto::class);
+        return $this->hasMany(Producto::class);
     }
 }
