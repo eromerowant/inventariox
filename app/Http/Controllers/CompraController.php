@@ -37,7 +37,7 @@ class CompraController extends Controller
         $el_ejemplar_ya_existe = false;
         $ejemplares_existente = Ejemplare::all();
         foreach ($ejemplares_existente as $ejemplar) {
-            if ($ejemplar->nombre === $request->input('nombreDeEntidadSeleccionadaParaComprar') && $ejemplar->atributos === $request->input('atributos')) {
+            if ($ejemplar->nombre === $request->input('nombreDeEntidadSeleccionadaParaComprar') && $ejemplar->atributos === json_encode($request->input('atributos'))) {
                 $el_ejemplar_ya_existe = true;
                 $new_ejemplar = $ejemplar;
             }

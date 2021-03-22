@@ -257,6 +257,7 @@
                         <th class="text-center">Características</th>
                         <th class="text-center">Costo Total</th>
                         <th class="text-center">Costo Unitario</th>
+                        <th class="text-center">Precio Sugerido</th>
                         <th class="text-center">Fecha</th>
                         <th class="text-center">Status</th>
                         <th class="text-center">Acciones</th>
@@ -264,16 +265,19 @@
                     </thead>
                     <tbody>
                       <tr v-for="(compra, index) in comprasRegistradas">
-                        <td class="text-center">
-                          <a target="_blank" :href="compra.enlace_url ? compra.enlace_url : '#'">
+                        <td v-if="compra.enlace_url" class="text-center">
+                          <a target="_blank" :href="compra.enlace_url">
                             @{{ compra.id }}
                           </a>
                         </td>
+                        <td v-else class="text-center">
+                          @{{ compra.id }}
+                        </td>
 
                         <td class="text-center">
-                          <ul v-for="(producto, index) in compra.productos">
-                            <li>@{{ producto.ejemplar.nombre }} (id: @{{ producto.id }})</li>
-                          </ul>
+                          <p v-for="(producto, index) in compra.productos">
+                            @{{ producto.ejemplar.nombre }} (id: @{{ producto.id }})
+                          </p>
                         </td>
 
                         <td class="text-center">
@@ -281,18 +285,23 @@
                         </td>
 
                         <td class="text-center">
-                          <ul v-for="(valor, atributo) in compra.productos[0].ejemplar.atributos">
-                            <li>@{{ atributo }} - @{{ valor }}</li>
-                          </ul>
+                          <p v-for="(valor, atributo) in compra.productos[0].ejemplar.atributos">
+                            @{{ atributo }}: @{{ valor }}
+                          </p>
                         </td>
 
                         <td class="text-center">@{{ compra.precio_total }}</td>
 
                         <td class="text-center">@{{ compra.productos[0].costo_unitario }}</td>
 
-                        <td class="text-center">@{{ compra.created_at }}</td>
+                        <td class="text-center">@{{ compra.productos[0].precio_sugerido }}</td>
+
+                        <td class="text-center">
+                          <p>@{{ getDateFormatted(compra.created_at) }}</p>
+                          <p>(@{{ getDate_inAgoFormat(compra.created_at) }})</p>
+                        </td>
                         
-                        <td class="text-center">@{{ compra.status }}</td>
+                        <td class="text-center">@{{ getStatusDeLaCompra(compra.status) }}</td>
 
                         <td class="text-center">
                           <a @click.prevent="eliminarCompra(compra.id)" class="btn btn-outline-danger btn-sm" href="#">Eliminar</a>
@@ -307,6 +316,7 @@
                         <th class="text-center">Características</th>
                         <th class="text-center">Costo Total</th>
                         <th class="text-center">Costo Unitario</th>
+                        <th class="text-center">Precio Sugerido</th>
                         <th class="text-center">Fecha</th>
                         <th class="text-center">Status</th>
                         <th class="text-center">Acciones</th>
@@ -607,6 +617,24 @@
                 console.log(err)
               })
             },
+
+            getStatusDeLaCompra(number){
+              let response = null;
+              switch (number) {
+                case "1": response = 'En espera'; break;
+              
+                default: break;
+              }
+              return response;
+            },
+
+            getDateFormatted(value){
+              return moment(String(value)).format('DD/MM/YYYY HH:mm');
+            },
+
+            getDate_inAgoFormat(value){
+              return moment(String(value)).fromNow();
+            }
         }, // end methods
 
 
