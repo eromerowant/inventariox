@@ -237,101 +237,102 @@
                     </form>
                   </div>
                 </div>
-              </div>
+                <!-- Tabla -->
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary text-center">Compras Registradas y esperando su despacho</h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                          <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-center">Producto(s)</th>
+                            <th class="text-center">Cantidad</th>
+                            <th class="text-center">Características</th>
+                            <th class="text-center">Costo Total</th>
+                            <th class="text-center">Costo Unitario</th>
+                            <th class="text-center">Precio Sugerido</th>
+                            <th class="text-center">Fecha</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(compra, index) in comprasRegistradas">
+                            <td v-if="compra.enlace_url" class="text-center">
+                              <a target="_blank" :href="compra.enlace_url">
+                                @{{ compra.id }}
+                              </a>
+                            </td>
+                            <td v-else class="text-center">
+                              @{{ compra.id }}
+                            </td>
 
+                            <td class="text-center">
+                              <p>
+                                @{{ compra.productos[0].ejemplar.nombre }}
+                              </p>
+                            </td>
 
+                            <td class="text-center">
+                              @{{compra.productos.length}} Unidades
+                            </td>
 
-            <!-- DataTales Example -->
-            <div class="card shadow mb-4">
-              <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary text-center">Compras Registradas</h6>
-              </div>
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                      <tr>
-                        <th class="text-center">ID</th>
-                        <th class="text-center">Producto(s)</th>
-                        <th class="text-center">Cantidad</th>
-                        <th class="text-center">Características</th>
-                        <th class="text-center">Costo Total</th>
-                        <th class="text-center">Costo Unitario</th>
-                        <th class="text-center">Precio Sugerido</th>
-                        <th class="text-center">Fecha</th>
-                        <th class="text-center">Status</th>
-                        <th class="text-center">Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="(compra, index) in comprasRegistradas">
-                        <td v-if="compra.enlace_url" class="text-center">
-                          <a target="_blank" :href="compra.enlace_url">
-                            @{{ compra.id }}
-                          </a>
-                        </td>
-                        <td v-else class="text-center">
-                          @{{ compra.id }}
-                        </td>
+                            <td class="text-center">
+                              <p v-for="(valor, atributo) in compra.productos[0].ejemplar.atributos">
+                                @{{ atributo }}: @{{ valor }}
+                              </p>
+                            </td>
 
-                        <td class="text-center">
-                          <p v-for="(producto, index) in compra.productos">
-                            @{{ producto.ejemplar.nombre }} (id: @{{ producto.id }})
-                          </p>
-                        </td>
+                            <td class="text-center">@{{ compra.precio_total }}</td>
 
-                        <td class="text-center">
-                          @{{compra.productos.length}} Unidades
-                        </td>
+                            <td class="text-center">@{{ compra.productos[0].costo_unitario }}</td>
 
-                        <td class="text-center">
-                          <p v-for="(valor, atributo) in compra.productos[0].ejemplar.atributos">
-                            @{{ atributo }}: @{{ valor }}
-                          </p>
-                        </td>
+                            <td class="text-center">@{{ compra.productos[0].precio_sugerido }}</td>
 
-                        <td class="text-center">@{{ compra.precio_total }}</td>
+                            <td class="text-center">
+                              <p>@{{ getDateFormatted(compra.created_at) }}</p>
+                              <p>(@{{ getDate_inAgoFormat(compra.created_at) }})</p>
+                            </td>
+                            
+                            <td class="text-center">@{{ getStatusDeLaCompra(compra.status) }}</td>
 
-                        <td class="text-center">@{{ compra.productos[0].costo_unitario }}</td>
+                            <td class="text-center">
+                              <a @click.prevent="eliminarCompra(compra.id)" class="btn btn-outline-danger btn-sm m-1" href="#">Eliminar</a>
+                              <a @click.prevent="cambiarStatusDeCompra(compra.id)" class="btn btn-outline-info btn-sm m-1" href="#">Cambiar Status</a>
+                            </td>
+                          </tr>
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-center">Producto(s)</th>
+                            <th class="text-center">Cantidad</th>
+                            <th class="text-center">Características</th>
+                            <th class="text-center">Costo Total</th>
+                            <th class="text-center">Costo Unitario</th>
+                            <th class="text-center">Precio Sugerido</th>
+                            <th class="text-center">Fecha</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Acciones</th>
+                          </tr>
+                        </tfoot>
 
-                        <td class="text-center">@{{ compra.productos[0].precio_sugerido }}</td>
-
-                        <td class="text-center">
-                          <p>@{{ getDateFormatted(compra.created_at) }}</p>
-                          <p>(@{{ getDate_inAgoFormat(compra.created_at) }})</p>
-                        </td>
-                        
-                        <td class="text-center">@{{ getStatusDeLaCompra(compra.status) }}</td>
-
-                        <td class="text-center">
-                          <a @click.prevent="eliminarCompra(compra.id)" class="btn btn-outline-danger btn-sm" href="#">Eliminar</a>
-                        </td>
-                      </tr>
-                    </tbody>
-                    <tfoot>
-                      <tr>
-                        <th class="text-center">ID</th>
-                        <th class="text-center">Producto(s)</th>
-                        <th class="text-center">Cantidad</th>
-                        <th class="text-center">Características</th>
-                        <th class="text-center">Costo Total</th>
-                        <th class="text-center">Costo Unitario</th>
-                        <th class="text-center">Precio Sugerido</th>
-                        <th class="text-center">Fecha</th>
-                        <th class="text-center">Status</th>
-                        <th class="text-center">Acciones</th>
-                      </tr>
-                    </tfoot>
-
-                  </table>
+                      </table>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-
               <!-- /COMPRAS-CONTENT -->
             </div>
 
-            <div class="tab-pane fade" id="inventario" role="tabpanel" aria-labelledby="inventario-tab">-inventario content-</div>
+            <div class="tab-pane fade" id="inventario" role="tabpanel" aria-labelledby="inventario-tab">
+              {{-- INVENTARIO-CONTENT --}}
+              INVENTARIO--CONTENT
+              {{-- /INVENTARIO-CONTENT --}}
+            </div>
           </div>
 
         </div>
@@ -565,6 +566,10 @@
               setTimeout(() => {
                 this.traerTodasLasComprasRegistradasDeBaseDeDatos();
               }, 1000);
+            },
+
+            cambiarStatusDeCompra(compra_id){
+              console.log('cambiar el status de la compra:', compra_id);
             },
 
             registrarNuevaCompraEnBaseDeDatos(nueva_compra){

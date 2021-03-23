@@ -15,7 +15,7 @@ class CompraController extends Controller
 
     public function comprasRegistradas()
     {
-        $compras_registradas = Compra::all();
+        $compras_registradas = Compra::where('status', 1)->get(); // En espera
 
         foreach ($compras_registradas as $key => $value) {
             $compras_registradas[$key]['productos'] = $value->productos;
