@@ -147,10 +147,13 @@ class CompraController extends Controller
                 $producto->status = 2; //Disponible
                 $producto->save();
             }
+            $ejemplar = Ejemplare::where('id', $productos[0]->ejemplar_id)->first();
+            $ejemplar->cantidad_disponible += count($productos);
+            $ejemplar->save();
 
             $bitacora = new Bitacora();
             $el_usuario =  "el usuario: ".Auth::user()->name." con ID: ".Auth::user()->id;
-            $bitacora->suceso = $el_usuario.", cambió el status de la compra con id: ".$compra->id.", a status 2 (Compra Recibida), y todos sus productos relacionados pasaron a estar disponibles";
+            $bitacora->suceso = $el_usuario.", cambió el status de la compra con id: ".$compra->id.", a status 2 (Compra Recibida), todos sus productos relacionados pasaron a estar disponibles y se sumaron ".count($productos)." a la cantidad_disponible en la tabla ejemplares.";
             $bitacora->save();
 
             return response()->json(['compra_id_con_nuevo_status_2' => $compra->id]);
@@ -170,10 +173,13 @@ class CompraController extends Controller
                 $producto->status = 1; // En Espera
                 $producto->save();
             }
+            $ejemplar = Ejemplare::where('id', $productos[0]->ejemplar_id)->first();
+            $ejemplar->cantidad_disponible -= count($productos);
+            $ejemplar->save();
 
             $bitacora = new Bitacora();
             $el_usuario =  "el usuario: ".Auth::user()->name." con ID: ".Auth::user()->id;
-            $bitacora->suceso = $el_usuario.", cambió el status de la compra con id: ".$compra->id.", a status 1 (Sin Recibir)., y todos sus productos relacionados pasaron a estar EN ESPERA.";
+            $bitacora->suceso = $el_usuario.", cambió el status de la compra con id: ".$compra->id.", a status 1 (Sin Recibir), todos sus productos relacionados pasaron a estar EN ESPERA, y se restaron ".count($productos)." a la cantidad_disponible en la tabla ejemplares.";
             $bitacora->save();
 
             return response()->json(['compra_id_con_nuevo_status_1' => $compra->id]);
