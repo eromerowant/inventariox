@@ -17,8 +17,8 @@ class CreateProductosTable extends Migration
             $table->unsignedBigInteger('compra_id');
             $table->foreign('compra_id')->references('id')->on('compras');
 
-            $table->decimal('costo_unitario', 8, 2)->comment('xxxxxxxx.xx');
-            $table->decimal('precio_sugerido', 8, 2)->comment('xxxxxxxx.xx');
+            $table->decimal('costo_unitario', 12, 2)->comment('xxxxxxxx.xx');
+            $table->decimal('precio_sugerido', 12, 2)->comment('xxxxxxxx.xx');
             $table->tinyInteger('status')->default(1)->comment('1 es en espera y 2 es disponible');
             $table->text('qr_code')->nullable();
 

@@ -14,7 +14,7 @@ class CreateVentasTable extends Migration
             $table->unsignedBigInteger('pedido_id');
             $table->foreign('pedido_id')->references('id')->on('pedidos');
 
-            $table->decimal('monto_total', 8, 2)->comment('xxxxxxxx.xx');
+            $table->decimal('monto_total', 12, 2)->comment('xxxxxxxx.xx');
 
             $table->timestamps();
         });
