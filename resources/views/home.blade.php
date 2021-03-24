@@ -448,8 +448,31 @@
               {{-- INVENTARIO-CONTENT --}}
                 <div class="container-fluid mt-2">
 
+                  <div class="row">
+                    <div class="col-md-12">
+                      <h4>Ejemplares:</h4>
+                    </div>
+                    <div class="col-md-3">
+                      <ul v-for="(elementos, nombre) in ejemplares_en_base_de_datos">
+                        <li style="cursor: pointer;" @click.prevent="handleNombreDeEjemplarSeleccionado(nombre)">@{{nombre}}</li>
+                      </ul>
+                    </div>
+                    <div class="col-md-9">
+                      <h5 class="text-center">@{{vistaInventario.nombre_seleccionado}}</h5>
+                        <div class="card m-1" v-for="(elementos, nombre) in vistaInventario.atributos_de_nombre_seleccionado">
+                          <div class="card-header text-center">Cantidad Disponible: @{{ elementos['cantidad_disponible'] }}</div>
+                          <div class="card-body d-flex justify-content-center">
+                            <p class="m-1" v-for="(valor, atributo) in elementos['atributo']">
+                              <span>@{{ atributo }}:</span> <span> @{{ valor }} </span>  
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                  </div>
+
+
                   {{-- TABLA DE productos disponibles --}}
-                  <div class="card shadow mb-4">
+                  {{-- <div class="card shadow mb-4">
                     <div class="card-header py-3">
                       <h5 class="m-0 font-weight-bold text-primary text-center">PRODUCTOS DISPONIBLESSS</h5>
                     </div>
@@ -475,7 +498,7 @@
                         </table>
                       </div>
                     </div>
-                  </div>
+                  </div> --}}
                   {{-- /TABLA DE productos disponibles --}}
                   
                 </div>
@@ -621,6 +644,14 @@
 
                 cambiarStatusDeLaCompraConId: null,
                 mensajeDelBotonModalParaCambioDeStatus: null,
+
+                // Inventario
+                ejemplares_en_base_de_datos: [],
+                vistaInventario: {
+                  nombre_seleccionado: null,
+                  atributos_de_nombre_seleccionado: [],
+                },
+                actualizar_ejemplaresDesdeBaseDeDatos: false,
             }
 
         },
@@ -790,7 +821,6 @@
                 default:
                   break;
               }
-
             },
 
             cambiarStatusDeCompra(tipo_de_cambio){
@@ -861,6 +891,10 @@
               }, 1000);
             },
 
+            // antiRebote: _.debounce(function (callback, args) {
+            //   callback(args);
+            // }, 3000),
+
             traerTodasLasEntidadesRegistradasDeBaseDeDatos(){
               axios.get( "{{route('entidadesRegistradas')}}")
                 .then(res => {
@@ -885,6 +919,7 @@
                 }).catch(err => {
                 console.log(err)
               })
+              this.actualizar_ejemplaresDesdeBaseDeDatos = true;
             },
 
             traerTodasLasComprasRegistradasYRecibidasDeBaseDeDatos(){
@@ -895,6 +930,7 @@
                 }).catch(err => {
                 console.log(err)
               })
+              this.actualizar_ejemplaresDesdeBaseDeDatos = true;
             },
 
             getStatusDeLaCompra(number){
@@ -906,6 +942,23 @@
                 default: break;
               }
               return response;
+            },
+
+            getEjemplaresEnBaseDeDatos(){
+              axios.get( "{{route('VerEjemplares')}}")
+                .then(res => {
+                  this.ejemplares_en_base_de_datos = res.data.ejemplares;
+                }).catch(err => {
+                console.log(err)
+              })
+              this.actualizar_ejemplaresDesdeBaseDeDatos = false;
+              this.vistaInventario.nombre_seleccionado = null;
+              this.vistaInventario.atributos_de_nombre_seleccionado = [];
+            },
+
+            handleNombreDeEjemplarSeleccionado(nombre_de_ejemplar_seleccionado){
+              this.vistaInventario.nombre_seleccionado = nombre_de_ejemplar_seleccionado;
+              this.vistaInventario.atributos_de_nombre_seleccionado = this.ejemplares_en_base_de_datos[nombre_de_ejemplar_seleccionado];
             },
 
             getDateFormatted(value){
@@ -933,7 +986,14 @@
                   this.updateAtributosInDataBase(newVal);
                 }
             }
-          }
+          },
+
+          actualizar_ejemplaresDesdeBaseDeDatos(newVal) {
+            if (newVal) {
+              console.log('se actualizaron los ejemplares desde base de datos');
+              this.getEjemplaresEnBaseDeDatos();
+            }
+          },
 
         }, // end watch
 
@@ -962,6 +1022,7 @@
           this.traerTodasLasEntidadesRegistradasDeBaseDeDatos();
           this.traerTodasLasComprasRegistradasYPendientesDeBaseDeDatos();
           this.traerTodasLasComprasRegistradasYRecibidasDeBaseDeDatos();
+          this.actualizar_ejemplaresDesdeBaseDeDatos = true;
         },
 
         })

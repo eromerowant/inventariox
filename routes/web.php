@@ -34,3 +34,8 @@ Route::post('/registrar-nueva-compra', 'CompraController@registrarNuevaCompra')-
 Route::post('/eliminar-compra-registrada', 'CompraController@eliminarCompraRegistrada')->name('eliminarCompraRegistrada');
 Route::post('/cambiar-status-de-compra-a-recibida', 'CompraController@CambiarStatusDeCompraARecibida')->name('CambiarStatusDeCompraARecibida');
 Route::post('/cambiar-status-de-compra-a-pendiente', 'CompraController@CambiarStatusDeCompraAPendiente')->name('CambiarStatusDeCompraAPendiente');
+
+
+
+
+Route::get('/mostrar-ejemplares', 'EjemplareController@index')->name('VerEjemplares');

@@ -7,77 +7,52 @@ use Illuminate\Http\Request;
 
 class EjemplareController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        $ejemplares = Ejemplare::all();
+        $ejemplares_filtrados = [];
+        foreach ($ejemplares as $key => $ejemplar) {
+            $nombre_existente_en_variable_ejemplares_filtrados = in_array($ejemplar->nombre, $ejemplares_filtrados);
+            if (!$nombre_existente_en_variable_ejemplares_filtrados) {
+                $nuevo_nombre = $ejemplar->nombre;
+                $ejemplares_filtrados[$nuevo_nombre][$key] = [];
+                $ejemplares_filtrados[$nuevo_nombre][$key]['atributo'] = json_decode($ejemplar->atributos);
+                $ejemplares_filtrados[$nuevo_nombre][$key]['cantidad_disponible'] = $ejemplar->cantidad_disponible;
+            } else {
+                $nombre_existente = $ejemplar->nombre;
+                $ejemplares_filtrados[$nombre_existente][$key]['atributo'] = json_decode($ejemplar->atributos);
+                $ejemplares_filtrados[$nombre_existente][$key]['cantidad_disponible'] = $ejemplar->cantidad_disponible;
+            }
+        }
+
+        return response()->json(['ejemplares' => $ejemplares_filtrados]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Ejemplare  $ejemplare
-     * @return \Illuminate\Http\Response
-     */
     public function show(Ejemplare $ejemplare)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Ejemplare  $ejemplare
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Ejemplare $ejemplare)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Ejemplare  $ejemplare
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Ejemplare $ejemplare)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Ejemplare  $ejemplare
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Ejemplare $ejemplare)
     {
         //
