@@ -13,9 +13,24 @@ use Illuminate\Http\Request;
 class CompraController extends Controller
 {
 
-    public function comprasRegistradas()
+    public function comprasRegistradasYPendientes()
     {
         $compras_registradas = Compra::where('status', 1)->get(); // En espera
+
+        foreach ($compras_registradas as $key => $value) {
+            $compras_registradas[$key]['productos'] = $value->productos;
+            foreach ($compras_registradas[$key]['productos'] as $pos => $producto) {
+                $compras_registradas[$key]['productos'][$pos]['ejemplar'] = $producto->ejemplar;
+                $compras_registradas[$key]['productos'][$pos]['ejemplar']['atributos'] = json_decode($compras_registradas[$key]['productos'][$pos]['ejemplar']['atributos']);
+            }
+        }
+
+        return response()->json(['compras_registradas' => $compras_registradas]);
+    }
+
+    public function comprasRegistradasYRecibidas()
+    {
+        $compras_registradas = Compra::where('status', 2)->get(); // Recibidas
 
         foreach ($compras_registradas as $key => $value) {
             $compras_registradas[$key]['productos'] = $value->productos;
@@ -116,6 +131,52 @@ class CompraController extends Controller
             $bitacora->save();
 
             return response()->json(['compra_id_borrada' => $id]);
+        }
+        return response()->json(['error' => 'hubo un error']);
+    }
+
+    public function CambiarStatusDeCompraARecibida(Request $request)
+    {
+        if ($request->input('compra_id')) {
+            $compra = Compra::where('id', $request->input('compra_id'))->first();
+            $compra->status = 2; // Compra Recibida
+            $compra->save();
+
+            $productos = Producto::where('compra_id', $compra->id)->get();
+            foreach ($productos as $producto) {
+                $producto->status = 2; //Disponible
+                $producto->save();
+            }
+
+            $bitacora = new Bitacora();
+            $el_usuario =  "el usuario: ".Auth::user()->name." con ID: ".Auth::user()->id;
+            $bitacora->suceso = $el_usuario.", cambió el status de la compra con id: ".$compra->id.", a status 2 (Compra Recibida), y todos sus productos relacionados pasaron a estar disponibles";
+            $bitacora->save();
+
+            return response()->json(['compra_id_con_nuevo_status_2' => $compra->id]);
+        }
+        return response()->json(['error' => 'hubo un error']);
+    }
+
+    public function CambiarStatusDeCompraAPendiente(Request $request)
+    {
+        if ($request->input('compra_id')) {
+            $compra = Compra::where('id', $request->input('compra_id'))->first();
+            $compra->status = 1; // Compra PENDIENTE
+            $compra->save();
+
+            $productos = Producto::where('compra_id', $compra->id)->get();
+            foreach ($productos as $producto) {
+                $producto->status = 1; // En Espera
+                $producto->save();
+            }
+
+            $bitacora = new Bitacora();
+            $el_usuario =  "el usuario: ".Auth::user()->name." con ID: ".Auth::user()->id;
+            $bitacora->suceso = $el_usuario.", cambió el status de la compra con id: ".$compra->id.", a status 1 (Sin Recibir)., y todos sus productos relacionados pasaron a estar EN ESPERA.";
+            $bitacora->save();
+
+            return response()->json(['compra_id_con_nuevo_status_1' => $compra->id]);
         }
         return response()->json(['error' => 'hubo un error']);
     }

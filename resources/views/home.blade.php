@@ -22,321 +22,526 @@
           </ul>
           <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="configuracion" role="tabpanel" aria-labelledby="configuracion-tab">
-            <!-- CONFIGURACION CONTENT -->
-            <div class="container-fluid">
-              <!-- Page Heading -->
+              <!-- CONFIGURACION CONTENT -->
+              <div class="container-fluid">
+                <!-- Page Heading -->
 
 
-            
               
-                <div class="row mt-3">
-                  <form>
-                    <div class="form-group">
-                      <label for="formGroupExampleInput">Nombre de la Entidad:</label>
-                      <input @keyup.prevent="findEntidad" v-model="buscarNombreEntidad" type="text" class="form-control" placeholder="Buscar...">
-                    </div>
-                  </form>
-                </div>
-                <!-- VISTA UNO -->
-                <div class="row">
-                  <!-- entidad REGISTRADA -->
-                  <ul v-if="nombreExisteEnRegistroDeEntidades">
-                    <li v-for="(producto, index) in nombresDeEntidadesRegistradas" :key="index">
-                      <a href="#" @click.prevent="verEntidadRegistrada(producto)">
-                        Ver <strong>@{{ producto.nombreEntidad }}</strong>
-                      </a>
-                    </li>
-                  </ul>
-                  <!-- /entidad REGISTRADA -->
-                  <!-- entidad NUEVA -->
-                  <div v-else-if="!nombreExisteEnRegistroDeEntidades && buscarNombreEntidad.length > 2">
-                    <a @click.prevent="verNuevoNombreDeEntidad" href="#">
-                      <p>Registrar <strong>@{{ buscarNombreEntidad }}</strong> como nuevo nombre de entidad</p>
-                    </a>
-                  </div>
-                  <!-- /entidad NUEVA -->
-                  {{-- TODO --}}
-                  <ul v-else>
-                    <li v-for="(producto, index) in registroDeEntidades" :key="producto.id">
-                      <a href="#" @click.prevent="verEntidadRegistrada(producto)">
-                        Ver <strong>@{{ producto.nombreEntidad }}</strong>
-                      </a>
-                    </li>
-                  </ul>
-                  {{-- /TODO --}}
-                </div>
-                <!-- /VISTA UNO -->
                 
-
-                <!-- VISTA DOS -->
-                <div class="row">
-                  <div class="col-md-10 offset-md-1 text-center">
-                    <!-- ENTIDAD NUEVA -->
-                    <form v-if="agregarNuevoNombreDeEntidad">
-                      <div class="form-group text-center">
-                        <label class="text-center">Nuevo Nombre de la entidad</label>
-                        <input v-model="newEntidad.nombreEntidad" type="text" class="form-control text-center" readonly>
+                  <div class="row mt-3">
+                    <form>
+                      <div class="form-group">
+                        <label for="formGroupExampleInput">Nombre de la Entidad:</label>
+                        <input @keyup.prevent="findEntidad" v-model="buscarNombreEntidad" type="text" class="form-control" placeholder="Buscar...">
                       </div>
-                      <h5 class="text-center">Atributos</h5>
-                      <div class="form-group text-center">
-                        <label class="sr-only">Nombre del Atributo Nuevo</label>
-                        <div class="input-group mb-2">
-                          <input v-model="newAtributo.nombre" type="text" class="form-control" placeholder="Nuevo Atributo...">
-                          <div class="input-group-append">
-                            <button :disabled="atributoNoValidoParaSerAgregado" @click.prevent="handleNewAtributo" class="input-group-text btn btn-outline-success">
-                              <i class="fa fa-plus"></i>
-                            </button>
-                          </div>
-                        </div>
-                        <small v-if="atributoNoValidoParaSerAgregado" class="text-danger">El Atributo @{{ newAtributo.nombre }} no es válido...</small>
-                      </div>
-
-                      <div class="form-row">
-                        <div class="form-col" v-for="(atributo, index) in newEntidad.atributos" :key="index">
-                          <!-- TARJETAS - entidad registrada -->
-                          <tarjeta-de-atributo 
-                            :atributo="atributo"
-                            :remove-atributo="removeAtributo"
-                            @new-valor="handleNewValor"
-                            @remove-valor="removeIncomingValue"
-                          />
-                          <!-- /TARJETAS - entidad registrada -->
-                        </div>
-                      </div>
-
-                      
                     </form>
-                    <!-- /ENTIDAD NUEVA -->
-      
-                    <!-- ENTIDAD REGISTRADA -->
-                    <form v-else-if="agregarNombreDeEntidadExistente">
-                      <div class="form-group text-center">
-                        <label class="sr-only">Nombre del Atributo Nuevo</label>
-                        <div class="input-group mb-2">
-                          <input v-model="newEntidad.nombreEntidad" type="text" class="form-control text-center" readonly>
-                          <div class="input-group-append">
-                            <a href="#" class="btn btn-outline-info btn-sm"><i class="fas fa-edit"></i></a>
-                            <a @click.prevent="removeProductNameRegistered(newEntidad.nombreEntidad, newEntidad.id)" href="#" class="btn btn-outline-danger btn-sm"><i class="fas fa-times-circle"></i></a>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="form-group text-center">
-                        <label class="sr-only">Nombre del Atributo Nuevo</label>
-                        <div class="input-group mb-2">
-                          <input v-model="newAtributo.nombre" type="text" class="form-control" placeholder="Nuevo Atributo...">
-                          <div class="input-group-append">
-                            <button :disabled="atributoNoValidoParaSerAgregado" @click.prevent="handleNewAtributo" class="input-group-text btn btn-outline-success">
-                              <i class="fa fa-plus"></i>
-                            </button>
-                          </div>
-                        </div>
-                        <small v-if="atributoNoValidoParaSerAgregado" class="text-danger">El Atributo @{{ newAtributo.nombre }} no es válido...</small>
-                      </div>
-
-                      <div class="form-row">
-                        <div class="form-col" v-for="(atributo, index) in newEntidad.atributos" :key="index">
-                          <!-- TARJETAS - entidad registrada -->
-                          <tarjeta-de-atributo 
-                            :atributo="atributo"
-                            :remove-atributo="removeAtributo"
-                            @new-valor="handleNewValor"
-                            @remove-valor="removeIncomingValue"
-                          />
-                          <!-- /TARJETAS - entidad registrada -->
-                        </div>
-                      </div>
-
-
-                      
-                    </form>
-                    <!-- /ENTIDAD REGISTRADA -->
                   </div>
-                </div>
-                <!-- /VISTA DOS -->
+                  <!-- VISTA UNO -->
+                  <div class="row">
+                    <!-- entidad REGISTRADA -->
+                    <ul v-if="nombreExisteEnRegistroDeEntidades">
+                      <li v-for="(producto, index) in nombresDeEntidadesRegistradas" :key="index">
+                        <a href="#" @click.prevent="verEntidadRegistrada(producto)">
+                          Ver <strong>@{{ producto.nombreEntidad }}</strong>
+                        </a>
+                      </li>
+                    </ul>
+                    <!-- /entidad REGISTRADA -->
+                    <!-- entidad NUEVA -->
+                    <div v-else-if="!nombreExisteEnRegistroDeEntidades && buscarNombreEntidad.length > 2">
+                      <a @click.prevent="verNuevoNombreDeEntidad" href="#">
+                        <p>Registrar <strong>@{{ buscarNombreEntidad }}</strong> como nuevo nombre de entidad</p>
+                      </a>
+                    </div>
+                    <!-- /entidad NUEVA -->
+                    {{-- TODO --}}
+                    <ul v-else>
+                      <li v-for="(producto, index) in registroDeEntidades" :key="producto.id">
+                        <a href="#" @click.prevent="verEntidadRegistrada(producto)">
+                          Ver <strong>@{{ producto.nombreEntidad }}</strong>
+                        </a>
+                      </li>
+                    </ul>
+                    {{-- /TODO --}}
+                  </div>
+                  <!-- /VISTA UNO -->
+                  
 
-            </div>
-            <!-- /CONFIGURACION CONTENT -->
+                  <!-- VISTA DOS -->
+                  <div class="row">
+                    <div class="col-md-10 offset-md-1 text-center">
+                      <!-- ENTIDAD NUEVA -->
+                      <form v-if="agregarNuevoNombreDeEntidad">
+                        <div class="form-group text-center">
+                          <label class="text-center">Nuevo Nombre de la entidad</label>
+                          <input v-model="newEntidad.nombreEntidad" type="text" class="form-control text-center" readonly>
+                        </div>
+                        <h5 class="text-center">Atributos</h5>
+                        <div class="form-group text-center">
+                          <label class="sr-only">Nombre del Atributo Nuevo</label>
+                          <div class="input-group mb-2">
+                            <input v-model="newAtributo.nombre" type="text" class="form-control" placeholder="Nuevo Atributo...">
+                            <div class="input-group-append">
+                              <button :disabled="atributoNoValidoParaSerAgregado" @click.prevent="handleNewAtributo" class="input-group-text btn btn-outline-success">
+                                <i class="fa fa-plus"></i>
+                              </button>
+                            </div>
+                          </div>
+                          <small v-if="atributoNoValidoParaSerAgregado" class="text-danger">El Atributo @{{ newAtributo.nombre }} no es válido...</small>
+                        </div>
+
+                        <div class="form-row">
+                          <div class="form-col" v-for="(atributo, index) in newEntidad.atributos" :key="index">
+                            <!-- TARJETAS - entidad registrada -->
+                            <tarjeta-de-atributo 
+                              :atributo="atributo"
+                              :remove-atributo="removeAtributo"
+                              @new-valor="handleNewValor"
+                              @remove-valor="removeIncomingValue"
+                            />
+                            <!-- /TARJETAS - entidad registrada -->
+                          </div>
+                        </div>
+
+                        
+                      </form>
+                      <!-- /ENTIDAD NUEVA -->
+        
+                      <!-- ENTIDAD REGISTRADA -->
+                      <form v-else-if="agregarNombreDeEntidadExistente">
+                        <div class="form-group text-center">
+                          <label class="sr-only">Nombre del Atributo Nuevo</label>
+                          <div class="input-group mb-2">
+                            <input v-model="newEntidad.nombreEntidad" type="text" class="form-control text-center" readonly>
+                            <div class="input-group-append">
+                              <a href="#" class="btn btn-outline-info btn-sm"><i class="fas fa-edit"></i></a>
+                              <a @click.prevent="removeProductNameRegistered(newEntidad.nombreEntidad, newEntidad.id)" href="#" class="btn btn-outline-danger btn-sm"><i class="fas fa-times-circle"></i></a>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group text-center">
+                          <label class="sr-only">Nombre del Atributo Nuevo</label>
+                          <div class="input-group mb-2">
+                            <input v-model="newAtributo.nombre" type="text" class="form-control" placeholder="Nuevo Atributo...">
+                            <div class="input-group-append">
+                              <button :disabled="atributoNoValidoParaSerAgregado" @click.prevent="handleNewAtributo" class="input-group-text btn btn-outline-success">
+                                <i class="fa fa-plus"></i>
+                              </button>
+                            </div>
+                          </div>
+                          <small v-if="atributoNoValidoParaSerAgregado" class="text-danger">El Atributo @{{ newAtributo.nombre }} no es válido...</small>
+                        </div>
+
+                        <div class="form-row">
+                          <div class="form-col" v-for="(atributo, index) in newEntidad.atributos" :key="index">
+                            <!-- TARJETAS - entidad registrada -->
+                            <tarjeta-de-atributo 
+                              :atributo="atributo"
+                              :remove-atributo="removeAtributo"
+                              @new-valor="handleNewValor"
+                              @remove-valor="removeIncomingValue"
+                            />
+                            <!-- /TARJETAS - entidad registrada -->
+                          </div>
+                        </div>
+
+
+                        
+                      </form>
+                      <!-- /ENTIDAD REGISTRADA -->
+                    </div>
+                  </div>
+                  <!-- /VISTA DOS -->
+
+              </div>
+              <!-- /CONFIGURACION CONTENT -->
             </div>
 
             <div class="tab-pane fade" id="compras" role="tabpanel" aria-labelledby="compras-tab">
               <!-- COMPRAS-CONTENT -->
-              <div class="container-fluid m-3">
+                <div class="container-fluid mt-2">
+                  <ul class="nav nav-tabs" id="myTabCompras" role="tablist">
+                    <li class="nav-item">
+                      <a class="nav-link active" id="registrar-nueva-compra-tab" data-toggle="tab" href="#registrar-nueva-compra" role="tab" aria-controls="registrar-nueva-compra" aria-selected="true">Registrar Nueva Compra</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="compras-recibidas-tab" data-toggle="tab" href="#compras-recibidas" role="tab" aria-controls="compras-recibidas" aria-selected="false">Compras Recibidas</a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="tab-content" id="myTabComprasContent">
+                  <div class="tab-pane fade show active" id="registrar-nueva-compra" role="tabpanel" aria-labelledby="registrar-nueva-compra-tab">
+                    {{-- nueva-compra --}}
+                      <div class="container-fluid m-3">
 
-                <div class="row mt-3">
-                  <div class="col">
-                    <form>
-                      <div class="row">
-                        <div class="col">
-                          <div class="form-group">
-                            <label for="exampleFormControlSelect1">Selecciona el Producto:</label>
-                            <select v-model="formCompra.nombreDeEntidadSeleccionadaParaComprar" class="form-control" required>
-                              <option value="">--Seleccione--</option>
-                              <option v-for="(producto, index) in registroDeEntidades" 
-                                :value="producto.nombreEntidad"
-                              >@{{ producto.nombreEntidad }}</option>
-                            </select>
+                        <div class="row mt-3">
+                          <div class="col">
+                            <form>
+                              <div class="row">
+                                <div class="col">
+                                  <div class="form-group">
+                                    <label for="exampleFormControlSelect1">Selecciona el Producto:</label>
+                                    <select v-model="formCompra.nombreDeEntidadSeleccionadaParaComprar" class="form-control" required>
+                                      <option value="">--Seleccione--</option>
+                                      <option v-for="(producto, index) in registroDeEntidades" 
+                                        :value="producto.nombreEntidad"
+                                      >@{{ producto.nombreEntidad }}</option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row" v-for="(atributo, index) in atributosAMostrar" :key="atributo.nombre">
+          
+                                <div class="col">
+                                  <div class="form-group">
+                                    <label>@{{ atributo.nombre }}</label>
+                                    <select v-model="formCompra.atributos[atributo.nombre]" class="form-control" required>
+                                      <option :value="valor" v-for="(valor, pos) in atributo.valores">@{{ valor }}</option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col">
+                                  <div class="form-group">
+                                    <label>Cantidad de Unidades</label>
+                                    <input v-model="formCompra.cantidadItemsEnCompra" type="number" class="form-control" required>
+                                  </div>
+                                </div>
+                                <div class="col">
+                                  <div class="form-group">
+                                    <label>Monto Total Pagado</label>
+                                    <input v-model="formCompra.montoTotalPagado" type="number" class="form-control" required>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col">
+                                  <div class="form-group">
+                                    <label>Monto Unitario (c/u)</label>
+                                    <input v-model="costoUnitario" type="number" class="form-control" readonly>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col">
+                                  <div class="form-group">
+                                    <label>Precio Sugerido (c/u)</label>
+                                    <input v-model="formCompra.precioSugerido" type="number" class="form-control" required>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col">
+                                  <div class="form-group">
+                                    <label>Ingrese el enlace completo al sitio donde se realizó la compra:</label>
+                                    <input v-model="formCompra.enlaceURLDeLaCompra" type="text" class="form-control" placeholder="Ejemplo: https://www.proveedor.com" required>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col">
+                                  <div class="form-group">
+                                    <button @click.prevent="handleNuevaCompra" class="btn btn-outline-success">Registrar Compra</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                        <!-- Tabla -->
+                        <div class="card shadow mb-4">
+                          <div class="card-header py-3">
+                            <h5 class="m-0 font-weight-bold text-primary text-center">Compras Registradas y esperando su despacho</h5>
+                          </div>
+                          <div class="card-body">
+                            <div class="table-responsive">
+                              <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                  <tr>
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center">Producto(s)</th>
+                                    <th class="text-center">Cantidad</th>
+                                    <th class="text-center">Características</th>
+                                    <th class="text-center">Costo Total</th>
+                                    <th class="text-center">Costo Unitario</th>
+                                    <th class="text-center">Precio Sugerido</th>
+                                    <th class="text-center">Fecha</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Acciones</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr v-for="(compra, index) in comprasRegistradasYPendientes">
+                                    <td v-if="compra.enlace_url" class="text-center">
+                                      <a target="_blank" :href="compra.enlace_url">
+                                        @{{ compra.id }}
+                                      </a>
+                                    </td>
+                                    <td v-else class="text-center">
+                                      @{{ compra.id }}
+                                    </td>
+        
+                                    <td class="text-center">
+                                      <p>
+                                        @{{ compra.productos[0].ejemplar.nombre }}
+                                      </p>
+                                    </td>
+        
+                                    <td class="text-center">
+                                      @{{compra.productos.length}} Unidades
+                                    </td>
+        
+                                    <td class="text-center">
+                                      <p v-for="(valor, atributo) in compra.productos[0].ejemplar.atributos">
+                                        @{{ atributo }}: @{{ valor }}
+                                      </p>
+                                    </td>
+        
+                                    <td class="text-center">@{{ compra.precio_total }}</td>
+        
+                                    <td class="text-center">@{{ compra.productos[0].costo_unitario }}</td>
+        
+                                    <td class="text-center">@{{ compra.productos[0].precio_sugerido }}</td>
+        
+                                    <td class="text-center">
+                                      <p>@{{ getDateFormatted(compra.created_at) }}</p>
+                                      <p>(@{{ getDate_inAgoFormat(compra.created_at) }})</p>
+                                    </td>
+                                    
+                                    <td class="text-center">@{{ getStatusDeLaCompra(compra.status) }}</td>
+        
+                                    <td class="text-center">
+                                      <a @click.prevent="eliminarCompra(compra.id)" class="btn btn-outline-danger btn-sm m-1" href="#">Eliminar</a>
+                                      <a @click.prevent="handleCambioDeStatusDeCompra(compra.id, 'recibida')" class="btn btn-outline-info btn-sm m-1" href="#">Compra RECIBIDA</a>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                                <tfoot>
+                                  <tr>
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center">Producto(s)</th>
+                                    <th class="text-center">Cantidad</th>
+                                    <th class="text-center">Características</th>
+                                    <th class="text-center">Costo Total</th>
+                                    <th class="text-center">Costo Unitario</th>
+                                    <th class="text-center">Precio Sugerido</th>
+                                    <th class="text-center">Fecha</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Acciones</th>
+                                  </tr>
+                                </tfoot>
+        
+                              </table>
+                            </div>
                           </div>
                         </div>
                       </div>
-                      <div class="row" v-for="(atributo, index) in atributosAMostrar" :key="atributo.nombre">
-  
-                        <div class="col">
-                          <div class="form-group">
-                            <label>@{{ atributo.nombre }}</label>
-                            <select v-model="formCompra.atributos[atributo.nombre]" class="form-control" required>
-                              <option :value="valor" v-for="(valor, pos) in atributo.valores">@{{ valor }}</option>
-                            </select>
+                    {{-- /nueva-compra --}}
+                  </div>
+                  <div class="tab-pane fade" id="compras-recibidas" role="tabpanel" aria-labelledby="compras-tab">
+                    {{-- Compras-Recibidas --}}
+                      <div class="container-fluid">
+                        
+                        {{-- TABLA DE COMPRAS RECIBIDAS --}}
+                          <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                              <h5 class="m-0 font-weight-bold text-primary text-center">Compras Recibidas</h5>
+                            </div>
+                            <div class="card-body">
+                              <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                  <thead>
+                                    <tr>
+                                      <th class="text-center">ID</th>
+                                      <th class="text-center">Producto(s)</th>
+                                      <th class="text-center">Cantidad</th>
+                                      <th class="text-center">Características</th>
+                                      <th class="text-center">Costo Total</th>
+                                      <th class="text-center">Costo Unitario</th>
+                                      <th class="text-center">Precio Sugerido</th>
+                                      <th class="text-center">Fecha</th>
+                                      <th class="text-center">Status</th>
+                                      <th class="text-center">Acciones</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr v-for="(compra, index) in comprasRegistradasYRecibidas">
+                                      <td v-if="compra.enlace_url" class="text-center">
+                                        <a target="_blank" :href="compra.enlace_url">
+                                          @{{ compra.id }}
+                                        </a>
+                                      </td>
+                                      <td v-else class="text-center">
+                                        @{{ compra.id }}
+                                      </td>
+          
+                                      <td class="text-center">
+                                        <p>
+                                          @{{ compra.productos[0].ejemplar.nombre }}
+                                        </p>
+                                      </td>
+          
+                                      <td class="text-center">
+                                        @{{compra.productos.length}} Unidades
+                                      </td>
+          
+                                      <td class="text-center">
+                                        <p v-for="(valor, atributo) in compra.productos[0].ejemplar.atributos">
+                                          @{{ atributo }}: @{{ valor }}
+                                        </p>
+                                      </td>
+          
+                                      <td class="text-center">@{{ compra.precio_total }}</td>
+          
+                                      <td class="text-center">@{{ compra.productos[0].costo_unitario }}</td>
+          
+                                      <td class="text-center">@{{ compra.productos[0].precio_sugerido }}</td>
+          
+                                      <td class="text-center">
+                                        <h6>Fecha de Registro</h6>
+                                        <p>@{{ getDateFormatted(compra.created_at) }}</p>
+                                        <p>(@{{ getDate_inAgoFormat(compra.created_at) }})</p>
+                                        <hr>
+                                        <h6>Fecha de recibimiento</h6>
+                                        <p>@{{ getDateFormatted(compra.updated_at) }}</p>
+                                        <p>(@{{ getDate_inAgoFormat(compra.updated_at) }})</p>
+                                      </td>
+                                      
+                                      <td class="text-center">@{{ getStatusDeLaCompra(compra.status) }}</td>
+          
+                                      <td class="text-center">
+                                        <a @click.prevent="eliminarCompra(compra.id)" class="btn btn-outline-danger btn-sm m-1" href="#">Eliminar</a>
+                                        <a @click.prevent="handleCambioDeStatusDeCompra(compra.id, 'sin_recibir')" class="btn btn-outline-info btn-sm m-1" href="#">Cambiar Status</a>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                  <tfoot>
+                                    <tr>
+                                      <th class="text-center">ID</th>
+                                      <th class="text-center">Producto(s)</th>
+                                      <th class="text-center">Cantidad</th>
+                                      <th class="text-center">Características</th>
+                                      <th class="text-center">Costo Total</th>
+                                      <th class="text-center">Costo Unitario</th>
+                                      <th class="text-center">Precio Sugerido</th>
+                                      <th class="text-center">Fecha</th>
+                                      <th class="text-center">Status</th>
+                                      <th class="text-center">Acciones</th>
+                                    </tr>
+                                  </tfoot>
+          
+                                </table>
+                              </div>
+                            </div>
                           </div>
-                        </div>
+                        {{-- /TABLA DE COMPRAS RECIBIDAS --}}
                       </div>
-                      <div class="row">
-                        <div class="col">
-                          <div class="form-group">
-                            <label>Cantidad de Unidades</label>
-                            <input v-model="formCompra.cantidadItemsEnCompra" type="number" class="form-control" required>
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="form-group">
-                            <label>Monto Total Pagado</label>
-                            <input v-model="formCompra.montoTotalPagado" type="number" class="form-control" required>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col">
-                          <div class="form-group">
-                            <label>Monto Unitario (c/u)</label>
-                            <input v-model="costoUnitario" type="number" class="form-control" readonly>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col">
-                          <div class="form-group">
-                            <label>Precio Sugerido (c/u)</label>
-                            <input v-model="formCompra.precioSugerido" type="number" class="form-control" required>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col">
-                          <div class="form-group">
-                            <label>Ingrese el enlace completo al sitio donde se realizó la compra:</label>
-                            <input v-model="formCompra.enlaceURLDeLaCompra" type="text" class="form-control" placeholder="Ejemplo: https://www.proveedor.com" required>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col">
-                          <div class="form-group">
-                            <button @click.prevent="handleNuevaCompra" class="btn btn-outline-success">Registrar Compra</button>
-                          </div>
-                        </div>
-                      </div>
-                    </form>
+                    {{-- /Compras-Recibidas --}}
                   </div>
                 </div>
-                <!-- Tabla -->
-                <div class="card shadow mb-4">
-                  <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary text-center">Compras Registradas y esperando su despacho</h6>
-                  </div>
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        <thead>
-                          <tr>
-                            <th class="text-center">ID</th>
-                            <th class="text-center">Producto(s)</th>
-                            <th class="text-center">Cantidad</th>
-                            <th class="text-center">Características</th>
-                            <th class="text-center">Costo Total</th>
-                            <th class="text-center">Costo Unitario</th>
-                            <th class="text-center">Precio Sugerido</th>
-                            <th class="text-center">Fecha</th>
-                            <th class="text-center">Status</th>
-                            <th class="text-center">Acciones</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="(compra, index) in comprasRegistradas">
-                            <td v-if="compra.enlace_url" class="text-center">
-                              <a target="_blank" :href="compra.enlace_url">
-                                @{{ compra.id }}
-                              </a>
-                            </td>
-                            <td v-else class="text-center">
-                              @{{ compra.id }}
-                            </td>
-
-                            <td class="text-center">
-                              <p>
-                                @{{ compra.productos[0].ejemplar.nombre }}
-                              </p>
-                            </td>
-
-                            <td class="text-center">
-                              @{{compra.productos.length}} Unidades
-                            </td>
-
-                            <td class="text-center">
-                              <p v-for="(valor, atributo) in compra.productos[0].ejemplar.atributos">
-                                @{{ atributo }}: @{{ valor }}
-                              </p>
-                            </td>
-
-                            <td class="text-center">@{{ compra.precio_total }}</td>
-
-                            <td class="text-center">@{{ compra.productos[0].costo_unitario }}</td>
-
-                            <td class="text-center">@{{ compra.productos[0].precio_sugerido }}</td>
-
-                            <td class="text-center">
-                              <p>@{{ getDateFormatted(compra.created_at) }}</p>
-                              <p>(@{{ getDate_inAgoFormat(compra.created_at) }})</p>
-                            </td>
-                            
-                            <td class="text-center">@{{ getStatusDeLaCompra(compra.status) }}</td>
-
-                            <td class="text-center">
-                              <a @click.prevent="eliminarCompra(compra.id)" class="btn btn-outline-danger btn-sm m-1" href="#">Eliminar</a>
-                              <a @click.prevent="cambiarStatusDeCompra(compra.id)" class="btn btn-outline-info btn-sm m-1" href="#">Cambiar Status</a>
-                            </td>
-                          </tr>
-                        </tbody>
-                        <tfoot>
-                          <tr>
-                            <th class="text-center">ID</th>
-                            <th class="text-center">Producto(s)</th>
-                            <th class="text-center">Cantidad</th>
-                            <th class="text-center">Características</th>
-                            <th class="text-center">Costo Total</th>
-                            <th class="text-center">Costo Unitario</th>
-                            <th class="text-center">Precio Sugerido</th>
-                            <th class="text-center">Fecha</th>
-                            <th class="text-center">Status</th>
-                            <th class="text-center">Acciones</th>
-                          </tr>
-                        </tfoot>
-
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
               <!-- /COMPRAS-CONTENT -->
             </div>
 
             <div class="tab-pane fade" id="inventario" role="tabpanel" aria-labelledby="inventario-tab">
               {{-- INVENTARIO-CONTENT --}}
-              INVENTARIO--CONTENT
+                <div class="container-fluid mt-2">
+
+                  {{-- TABLA DE productos disponibles --}}
+                  <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                      <h5 class="m-0 font-weight-bold text-primary text-center">PRODUCTOS DISPONIBLESSS</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                          <thead>
+                            <tr>
+                              <th class="text-center">ID</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td class="text-center">productoxxx</td>
+                            </tr>
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <th class="text-center">ID</th>
+                            </tr>
+                          </tfoot>
+
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                  {{-- /TABLA DE productos disponibles --}}
+                  
+                </div>
               {{-- /INVENTARIO-CONTENT --}}
             </div>
           </div>
 
         </div>
         <!-- /.container-fluid -->
+
+
+
+
+
+
+        <!-- Button trigger modal-cambiar status A SIN RECIBIR -->
+        <button id="button_show_modal_cambiar_status_compra_SIN_RECIBIR" type="button" class="btn btn-primary d-none" data-toggle="modal" data-target="#camBiarStatusDeCompraxsinrecibir">
+        </button>
+
+        <!-- Modal-cambiar status A SIN RECIBIR-->
+        <div class="modal fade" id="camBiarStatusDeCompraxsinrecibir" tabindex="-1" role="dialog" aria-labelledby="camBiarStatusDeCompraxsinrecibirTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Cambiar Status de la Compra</h5>
+                <button id="cerrar_modal_cambio_de_status_a_recibida" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>¿Te equivocaste y en realidad aún no has recibido los productos?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Salir</button>
+                <button @click.prevent="cambiarStatusDeCompra('compra_pendiente')" type="button" class="btn btn-success">Sí, la compra está pendiente todavía</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Button trigger modal-cambiar status A RECIBIDA -->
+        <button id="button_show_modal_cambiar_status_compra_recibida" type="button" class="btn btn-primary d-none" data-toggle="modal" data-target="#camBiarStatusDeComprax">
+        </button>
+
+        <!-- Modal-cambiar status A RECIBIDA-->
+        <div class="modal fade" id="camBiarStatusDeComprax" tabindex="-1" role="dialog" aria-labelledby="camBiarStatusDeCompraxTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Cambiar Status de la Compra</h5>
+                <button id="cerrar_modal_cambio_de_status_a_pendiente" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>¿Ya recibiste tus productos?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Salir</button>
+                <button @click.prevent="cambiarStatusDeCompra('compra_recibida')" type="button" class="btn btn-success">Sí, Compra Recibida</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
 
       </div>
       <!-- /VUEJS -->
@@ -411,7 +616,11 @@
                     atributos: {}
                 },
         
-                comprasRegistradas: [],
+                comprasRegistradasYPendientes: [],
+                comprasRegistradasYRecibidas: [],
+
+                cambiarStatusDeLaCompraConId: null,
+                mensajeDelBotonModalParaCambioDeStatus: null,
             }
 
         },
@@ -564,12 +773,66 @@
                   atributos: {}
               };
               setTimeout(() => {
-                this.traerTodasLasComprasRegistradasDeBaseDeDatos();
-              }, 1000);
+                this.traerTodasLasComprasRegistradasYPendientesDeBaseDeDatos();
+              }, 500);
             },
 
-            cambiarStatusDeCompra(compra_id){
-              console.log('cambiar el status de la compra:', compra_id);
+            handleCambioDeStatusDeCompra(compra_id, tipo_de_cambio){
+              this.cambiarStatusDeLaCompraConId = compra_id;
+              switch (tipo_de_cambio) {
+                case 'sin_recibir':
+                  document.querySelector('#button_show_modal_cambiar_status_compra_SIN_RECIBIR').click();
+                  break;
+                case 'recibida':
+                  document.querySelector('#button_show_modal_cambiar_status_compra_recibida').click();
+                  break;
+              
+                default:
+                  break;
+              }
+
+            },
+
+            cambiarStatusDeCompra(tipo_de_cambio){
+              switch (tipo_de_cambio) {
+                case 'compra_recibida':
+                  this.cambiarStatus_de_compra_a_Recibida();
+                  setTimeout(() => {
+                    this.traerTodasLasComprasRegistradasYPendientesDeBaseDeDatos();
+                    this.traerTodasLasComprasRegistradasYRecibidasDeBaseDeDatos();
+                  }, 500);
+                  break;
+                case 'compra_pendiente':
+                  this.cambiarStatus_de_compra_a_Pendiente();
+                  setTimeout(() => {
+                    this.traerTodasLasComprasRegistradasYPendientesDeBaseDeDatos();
+                    this.traerTodasLasComprasRegistradasYRecibidasDeBaseDeDatos();
+                  }, 500);
+                  break;
+              
+                default:
+                  break;
+              }
+            },
+
+            cambiarStatus_de_compra_a_Pendiente(){
+              axios.post( "{{route('CambiarStatusDeCompraAPendiente')}}", {compra_id: this.cambiarStatusDeLaCompraConId})
+                .then(res => {
+                  console.log(res.data);  
+                }).catch(err => {
+                console.log(err)
+              })
+              document.querySelector('#cerrar_modal_cambio_de_status_a_recibida').click();
+            },
+
+            cambiarStatus_de_compra_a_Recibida(){
+              axios.post( "{{route('CambiarStatusDeCompraARecibida')}}", {compra_id: this.cambiarStatusDeLaCompraConId})
+                .then(res => {
+                  console.log(res.data);  
+                }).catch(err => {
+                console.log(err)
+              })
+              document.querySelector('#cerrar_modal_cambio_de_status_a_pendiente').click();
             },
 
             registrarNuevaCompraEnBaseDeDatos(nueva_compra){
@@ -582,7 +845,7 @@
             },
 
             handleCompraRegistrada(id){
-                this.comprasRegistradas = this.comprasRegistradas.filter(compra => compra.id !== id);
+                this.comprasRegistradasYPendientes = this.comprasRegistradasYPendientes.filter(compra => compra.id !== id);
             },
 
             eliminarCompra(id){
@@ -593,7 +856,8 @@
                 console.log(err)
               })
               setTimeout(() => {
-                this.traerTodasLasComprasRegistradasDeBaseDeDatos();
+                this.traerTodasLasComprasRegistradasYPendientesDeBaseDeDatos();
+                this.traerTodasLasComprasRegistradasYRecibidasDeBaseDeDatos();
               }, 1000);
             },
 
@@ -613,11 +877,21 @@
               })
             },
 
-            traerTodasLasComprasRegistradasDeBaseDeDatos(){
-              axios.get( "{{route('comprasRegistradas')}}")
+            traerTodasLasComprasRegistradasYPendientesDeBaseDeDatos(){
+              axios.get( "{{route('comprasRegistradasYPendientes')}}")
                 .then(res => {
                   console.log(res.data.compras_registradas);
-                  this.comprasRegistradas = res.data.compras_registradas;
+                  this.comprasRegistradasYPendientes = res.data.compras_registradas;
+                }).catch(err => {
+                console.log(err)
+              })
+            },
+
+            traerTodasLasComprasRegistradasYRecibidasDeBaseDeDatos(){
+              axios.get( "{{route('comprasRegistradasYRecibidas')}}")
+                .then(res => {
+                  console.log(res.data.compras_registradas);
+                  this.comprasRegistradasYRecibidas = res.data.compras_registradas;
                 }).catch(err => {
                 console.log(err)
               })
@@ -627,6 +901,7 @@
               let response = null;
               switch (number) {
                 case "1": response = 'En espera'; break;
+                case "2": response = 'Recibida'; break;
               
                 default: break;
               }
@@ -685,7 +960,8 @@
 
         mounted: function() {
           this.traerTodasLasEntidadesRegistradasDeBaseDeDatos();
-          this.traerTodasLasComprasRegistradasDeBaseDeDatos();
+          this.traerTodasLasComprasRegistradasYPendientesDeBaseDeDatos();
+          this.traerTodasLasComprasRegistradasYRecibidasDeBaseDeDatos();
         },
 
         })
