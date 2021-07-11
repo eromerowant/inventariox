@@ -19,10 +19,17 @@ Route::get('/', function () {
 
 Auth::routes();
 
+Route::get('/configuracion', 'SidebarController@configuracion')->name('configuracion');
+Route::get('/compras/index', 'SidebarController@comprasIndex')->name('compras.index');
+Route::get('/compras/create', 'SidebarController@comprasCreate')->name('compras.create');
+
+
+
 Route::get('/home', 'HomeController@index')->name('home');
 
 //Entidades
 Route::get('/entidades-registradas', 'EntidadeController@index')->name('entidadesRegistradas');
+Route::post('/get_entidad', 'EntidadeController@get_entidad')->name('get_entidad');
 Route::post('/registrar-nueva-entidad', 'EntidadeController@storeNewEntidad')->name('storeNewEntidad');
 Route::post('/registrar-nuevo-atributo', 'EntidadeController@storeNewAtributo')->name('storeNewAtributo');
 Route::post('/borrar-entidad-existente', 'EntidadeController@borrarEntidadExistente')->name('borrarEntidadExistente');

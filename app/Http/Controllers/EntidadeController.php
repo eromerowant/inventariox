@@ -92,4 +92,10 @@ class EntidadeController extends Controller
         return response()->json(['error' => 'Hubo un error']);
     }
 
+    public function get_entidad(Request $request)
+    {
+        $entidad = Entidade::findOrFail( $request->get('entidad') );
+        return response()->json($entidad);
+    }
+
 }
