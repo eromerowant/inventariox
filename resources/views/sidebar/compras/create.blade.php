@@ -86,7 +86,7 @@
                     <div class="row">
                         <div class="col">
                         <div class="form-group">
-                            <button class="btn btn-outline-success">Registrar Compra</button>
+                            <button @click.prevent="registrarNuevaCompraEnBaseDeDatos()" class="btn btn-outline-success">Registrar Compra</button>
                         </div>
                         </div>
                     </div>
@@ -161,7 +161,7 @@
                     axios.post("{{ route('get_entidad') }}", obj)
                         .then(res => this.atributos = JSON.parse(res.data.atributos))
                 },
-                registrarNuevaCompraEnBaseDeDatos(nueva_compra){
+                registrarNuevaCompraEnBaseDeDatos(){
                     let nueva_compra = {
                         nombreDeEntidadSeleccionadaParaComprar: this.entidadSeleccionada,
                         cantidadItemsEnCompra: this.cantidad_de_unidades,
