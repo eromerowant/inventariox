@@ -36,7 +36,9 @@
                                                     <td>{{ \Carbon\Carbon::parse($compra->created_at)->format('d/m/Y') }}</td>
                                                     <td>{{ $compra->status == 1 ? "En camino" : "Recibida" }}</td>
                                                     <td>
-                                                        <button class="btn btn-outline-info btn-sm">Botón</button>
+                                                        <a href="{{ route('compras.show', ['compra_id' => $compra->id]) }}">
+                                                            <button class="btn btn-outline-info btn-sm">Botón</button>
+                                                        </a>
                                                     </td>
                                                 </tr>
                                             @endforeach

@@ -42,4 +42,11 @@ class SidebarController extends Controller
         $entidades = Entidade::select('id', 'nombre')->get();
         return view('sidebar.compras.create', ['entidades' => $entidades]);
     }
+
+    public function comprasShow($compra_id)
+    {
+        $compra = Compra::with('productos', 'ejemplar')->where('id', $compra_id)->first();
+
+        return view('sidebar.compras.show', ['compra' => $compra]);
+    }
 }

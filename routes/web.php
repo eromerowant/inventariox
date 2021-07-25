@@ -22,6 +22,7 @@ Auth::routes();
 Route::get('/configuracion', 'SidebarController@configuracion')->name('configuracion');
 Route::get('/compras/index', 'SidebarController@comprasIndex')->name('compras.index');
 Route::get('/compras/create', 'SidebarController@comprasCreate')->name('compras.create');
+Route::get('/compras/show/{compra_id}', 'SidebarController@comprasShow')->name('compras.show');
 
 // inventario
 Route::get('/inventario/index', 'SidebarController@inventarioIndex')->name('inventario.index');
