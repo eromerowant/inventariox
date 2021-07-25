@@ -19,8 +19,10 @@
                                     <table id="tabla_de_compras_en_camino" class="table-hover" style="width:100%">
                                         <thead>
                                             <tr>
+                                                <th>N°</th>
                                                 <th>ID</th>
                                                 <th>Cantidad</th>
+                                                <th>Producto</th>
                                                 <th>Precio Total</th>
                                                 <th>Fecha de Compra</th>
                                                 <th>Status</th>
@@ -30,8 +32,10 @@
                                         <tbody>
                                             @foreach ($compras_en_camino as $compra)
                                                 <tr>
+                                                    <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $compra->id }}</td>
                                                     <td>{{ $compra->cantidad }}</td>
+                                                    <td>{{ $compra->ejemplar->nombre }}</td>
                                                     <td>{{ number_format($compra->precio_total, 2, ',', '.') }}</td>
                                                     <td>{{ \Carbon\Carbon::parse($compra->created_at)->format('d/m/Y') }}</td>
                                                     <td>{{ $compra->status == 1 ? "En camino" : "Recibida" }}</td>
