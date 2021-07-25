@@ -47,12 +47,12 @@ class CompraController extends Controller
     public function registrarNuevaCompra(Request $request)
     {
         // Validaciones
-
         // Verificar que el ejemplar ya exista, pra no repetirlo en base de datos.
+        $new_ejemplar = null;
         $el_ejemplar_ya_existe = false;
         $ejemplares_existente = Ejemplare::all();
         foreach ($ejemplares_existente as $ejemplar) {
-            if ($ejemplar->nombre === $request->input('nombreDeEntidadSeleccionadaParaComprar') && $ejemplar->atributos === json_encode($request->input('atributos'))) {
+            if ($ejemplar->nombre === $request->input('entidadSeleccionada') && $ejemplar->atributos === json_encode($request->input('atributos_selected'))) {
                 $el_ejemplar_ya_existe = true;
                 $new_ejemplar = $ejemplar;
             }
@@ -61,28 +61,29 @@ class CompraController extends Controller
         // Registrar nuevo ejemplar
         if (!$el_ejemplar_ya_existe) {
             $new_ejemplar = new Ejemplare();
-            $new_ejemplar->nombre = $request->input('nombreDeEntidadSeleccionadaParaComprar');
-            $new_ejemplar->atributos = json_encode($request->input('atributos'));
+            $new_ejemplar->nombre = $request->input('entidadSeleccionada');
+            $new_ejemplar->atributos = json_encode($request->input('atributos_selected'));
             $new_ejemplar->cantidad_disponible = 0;
             $new_ejemplar->save();
         }
 
         // Registrar la compra
         $new_compra = new Compra();
-        $new_compra->cantidad = $request->input('cantidadItemsEnCompra');
-        $new_compra->precio_total = $request->input('montoTotalPagado');
-        $new_compra->enlace_url = $request->input('enlaceURLDeLaCompra');
+        $new_compra->cantidad = $request->input('cantidad_de_unidades');
+        $new_compra->precio_total = $request->input('monto_total_pagado');
+        $new_compra->enlace_url = $request->input('enlace_url');
+        $new_compra->ejemplar_id = $new_ejemplar->id;
         $new_compra->save();
         // $new_compra->status = 1; // Productos pendientes por recibir
 
         // Registrar los productos
         $productos = [];
-        for ($i=1; $i <= $request->input('cantidadItemsEnCompra'); $i++) { 
+        for ($i=1; $i <= $request->input('cantidad_de_unidades'); $i++) { 
             $new_producto = new Producto();
             $new_producto->ejemplar_id = $new_ejemplar->id;
             $new_producto->compra_id = $new_compra->id;
             $new_producto->costo_unitario = $request->input('costoPorUnidad');
-            $new_producto->precio_sugerido = $request->input('precioSugerido');
+            $new_producto->precio_sugerido = $request->input('precio_sugerido');
             $new_producto->status = 1;
             // $new_producto->qr_code = null;
             $new_producto->save();
@@ -94,11 +95,6 @@ class CompraController extends Controller
             'new_compra' => $new_compra,
             'productos' => $productos
         ];
-
-        $bitacora = new Bitacora();
-        $el_usuario =  "el usuario: ".Auth::user()->name." con ID: ".Auth::user()->id;
-        $bitacora->suceso = $el_usuario.", registró una compra bajo el ID: ".$new_compra->id;
-        $bitacora->save();
 
         return response()->json($response);
     }

@@ -8,7 +8,7 @@ class Producto extends Model
 {
     public function ejemplar()
     {
-        return $this->belongsTo(Ejemplare::class);
+        return $this->belongsTo(Ejemplare::class, "ejemplar_id");
     }
 
     public function compra()

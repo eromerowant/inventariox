@@ -13,6 +13,11 @@ class Ejemplare extends Model
 
     public function productos()
     {
-        return $this->hasMany(Producto::class);
+        return $this->hasMany(Producto::class, "ejemplar_id");
+    }
+
+    public function compras()
+    {
+        return $this->hasMany(Compra::class);
     }
 }

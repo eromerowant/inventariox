@@ -23,6 +23,8 @@ Route::get('/configuracion', 'SidebarController@configuracion')->name('configura
 Route::get('/compras/index', 'SidebarController@comprasIndex')->name('compras.index');
 Route::get('/compras/create', 'SidebarController@comprasCreate')->name('compras.create');
 
+// inventario
+Route::get('/inventario/index', 'SidebarController@inventarioIndex')->name('inventario.index');
 
 
 Route::get('/home', 'HomeController@index')->name('home');

@@ -16,6 +16,9 @@ class CreateComprasTable extends Migration
             $table->string('status')->comment('1 En camino. 2 Recibida')->default(1);
             $table->string('enlace_url')->comment('enlace hacia el proveedor')->nullable();
 
+            $table->unsignedBigInteger('ejemplar_id');
+            $table->foreign('ejemplar_id')->references('id')->on('ejemplares');
+
             $table->timestamps();
         });
     }

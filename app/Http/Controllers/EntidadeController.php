@@ -94,7 +94,7 @@ class EntidadeController extends Controller
 
     public function get_entidad(Request $request)
     {
-        $entidad = Entidade::findOrFail( $request->get('entidad') );
+        $entidad = Entidade::where('nombre', $request->get('entidad') )->first();
         return response()->json($entidad);
     }
 

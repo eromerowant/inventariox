@@ -23,10 +23,10 @@
                         <div class="col">
                         <div class="form-group">
                             <label>Selecciona el Producto:</label>
-                            <select @change="traerLaEntidadDeBaseDeDatos()" v-model="entidadSeleccionada" class="form-control" required>
-                                <option value="">--Seleccione--</option>
+                            <select @change="traerLaEntidadDeBaseDeDatos()" v-model="nueva_compra.entidadSeleccionada" class="form-control" required>
+                                <option value="" disabled selected>-- Seleccione --</option>
                                 @foreach ($entidades as $entidad)
-                                    <option value="{{ $entidad->id }}">{{ $entidad->nombre }}</option>
+                                    <option value="{{ $entidad->nombre }}">{{ $entidad->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -37,7 +37,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label>@{{ atributo.nombre }}</label>
-                                <select class="form-control" required>
+                                <select v-model="nueva_compra.atributos_selected[atributo.nombre]" class="form-control" required>
                                     <option v-for="valor in atributo.valores" :key="valor" :value="valor">@{{ valor }}</option>
                                 </select>
                             </div>
@@ -49,13 +49,13 @@
                         <div class="col">
                         <div class="form-group">
                             <label>Cantidad de Unidades</label>
-                            <input v-model="cantidad_de_unidades" type="number" class="form-control" min="1" step="1" required>
+                            <input v-model="nueva_compra.cantidad_de_unidades" type="number" class="form-control" min="1" step="1" required>
                         </div>
                         </div>
                         <div class="col">
                         <div class="form-group">
                             <label>Monto Total Pagado</label>
-                            <input v-model="monto_total_pagado" type="number" class="form-control" min="0" step="50" required>
+                            <input v-model="nueva_compra.monto_total_pagado" type="number" class="form-control" min="0" step="50" required>
                         </div>
                         </div>
                     </div>
@@ -71,7 +71,7 @@
                         <div class="col">
                         <div class="form-group">
                             <label>Precio Sugerido (c/u)</label>
-                            <input v-model="precio_sugerido" type="number" class="form-control" required>
+                            <input v-model="nueva_compra.precio_sugerido" type="number" class="form-control" required>
                         </div>
                         </div>
                     </div>
@@ -79,7 +79,7 @@
                         <div class="col">
                         <div class="form-group">
                             <label>Ingrese el enlace completo al sitio donde se realizó la compra:</label>
-                            <input v-model="enlace_url" type="text" class="form-control" placeholder="Ejemplo: https://www.proveedor.com" required>
+                            <input v-model="nueva_compra.enlace_url" type="text" class="form-control" placeholder="Ejemplo: https://www.proveedor.com" required>
                         </div>
                         </div>
                     </div>
@@ -138,47 +138,55 @@
             el: '#appVue',
             data() {
                 return {
-                    entidadSeleccionada: null,
                     atributos: [],
-                    
-                    cantidad_de_unidades: null,
-                    monto_total_pagado: null,
-                    precio_sugerido: null,
-                    enlace_url: null,
+
+                    nueva_compra: {
+                        entidadSeleccionada: null,
+                        cantidad_de_unidades: null,
+                        monto_total_pagado: null,
+                        precio_sugerido: null,
+                        enlace_url: null,
+                        atributos_selected: {},
+                    }
                 }
 
             },
 
             methods: {
                 traerLaEntidadDeBaseDeDatos(){
-                    if ( !this.entidadSeleccionada ) {
+                    if ( !this.nueva_compra.entidadSeleccionada ) {
                         this.atributos = [];
                         return;
                     }
                     let obj = {
-                        entidad: this.entidadSeleccionada
+                        entidad: this.nueva_compra.entidadSeleccionada
                     };
                     axios.post("{{ route('get_entidad') }}", obj)
                         .then(res => this.atributos = JSON.parse(res.data.atributos))
                 },
-                registrarNuevaCompraEnBaseDeDatos(){
+                registrarNuevaCompraEnBaseDeDatos: async function(){
                     let nueva_compra = {
-                        nombreDeEntidadSeleccionadaParaComprar: this.entidadSeleccionada,
-                        cantidadItemsEnCompra: this.cantidad_de_unidades,
-                        montoTotalPagado: this.monto_total_pagado,
+                        ...this.nueva_compra,
                         costoPorUnidad: this.monto_unitario,
-                        precioSugerido: this.precio_sugerido,
-                        enlaceURLDeLaCompra: this.enlace_url,
-                        atributos: {}
                     };
-                    axios.post( "{{route('registrarNuevaCompra')}}", nueva_compra)
-                        .then(res => console.log(res.data))
+                    let ok = await axios.post( "{{route('registrarNuevaCompra')}}", nueva_compra)
+                        .then(res => res.data);
+                        if ( ok ) {
+                            this.nueva_compra = {
+                                entidadSeleccionada: null,
+                                cantidad_de_unidades: null,
+                                monto_total_pagado: null,
+                                precio_sugerido: null,
+                                enlace_url: null,
+                                atributos_selected: {},
+                            };
+                        }
                 },
             },
             computed: {
                 monto_unitario(){
-                    if ( this.cantidad_de_unidades && this.monto_total_pagado ) {
-                        let monto_unitario = this.monto_total_pagado/this.cantidad_de_unidades;
+                    if ( this.nueva_compra.cantidad_de_unidades && this.nueva_compra.monto_total_pagado ) {
+                        let monto_unitario = this.nueva_compra.monto_total_pagado/this.nueva_compra.cantidad_de_unidades;
                         return monto_unitario; // Recuerda formatear el numero
                     }
                 }
