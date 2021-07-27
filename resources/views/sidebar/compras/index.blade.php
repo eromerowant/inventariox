@@ -41,7 +41,7 @@
                                                     <td>{{ $compra->status == 1 ? "En camino" : "Recibida" }}</td>
                                                     <td>
                                                         <a href="{{ route('compras.show', ['compra_id' => $compra->id]) }}">
-                                                            <button class="btn btn-outline-info btn-sm">Botón</button>
+                                                            <button class="btn btn-outline-info btn-sm">Ver</button>
                                                         </a>
                                                     </td>
                                                 </tr>
@@ -65,8 +65,10 @@
                                     <table id="tabla_de_compras_recibidas" class="table-hover" style="width:100%">
                                         <thead>
                                             <tr>
+                                                <th>N°</th>
                                                 <th>ID</th>
                                                 <th>Cantidad</th>
+                                                <th>Producto</th>
                                                 <th>Precio Total</th>
                                                 <th>Fecha de Compra</th>
                                                 <th>Status</th>
@@ -76,13 +78,17 @@
                                         <tbody>
                                             @foreach ($compras_recibidas as $compra)
                                                 <tr>
+                                                    <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $compra->id }}</td>
                                                     <td>{{ $compra->cantidad }}</td>
+                                                    <td>{{ $compra->ejemplar->nombre }}</td>
                                                     <td>{{ number_format($compra->precio_total, 2, ',', '.') }}</td>
                                                     <td>{{ \Carbon\Carbon::parse($compra->created_at)->format('d/m/Y') }}</td>
                                                     <td>{{ $compra->status == 1 ? "En camino" : "Recibida" }}</td>
                                                     <td>
-                                                        <button class="btn btn-outline-info btn-sm">Botón</button>
+                                                        <a href="{{ route('compras.show', ['compra_id' => $compra->id]) }}">
+                                                            <button class="btn btn-outline-info btn-sm">Ver</button>
+                                                        </a>
                                                     </td>
                                                 </tr>
                                             @endforeach

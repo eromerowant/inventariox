@@ -32,10 +32,6 @@ class EntidadeController extends Controller
             $entidad->atributos = "[]";
             $entidad->save();
 
-            $bitacora = new Bitacora();
-            $el_usuario =  "el usuario: ".Auth::user()->name." con ID: ".Auth::user()->id;
-            $bitacora->suceso = $el_usuario." agregó una nueva entidad con id: ".$entidad->id;
-            $bitacora->save();
             return response()->json(['entidad_agregada' => $entidad]);
         }
         return response()->json(['error' => 'Hubo un error']);
@@ -81,11 +77,6 @@ class EntidadeController extends Controller
             $entidad_existente = Entidade::where('id', $request->input('entidad_id'))->first();
             $entidad_existente->atributos = $request->input('atributos');
             $entidad_existente->update();
-
-            $bitacora = new Bitacora();
-            $el_usuario =  "el usuario: ".Auth::user()->name." con ID: ".Auth::user()->id;
-            $bitacora->suceso = $el_usuario." actualizó los atributos de la entidad con id: ".$entidad_existente;
-            $bitacora->save();
 
             return response()->json(['atributos_actualizados_en_entidad' => $entidad_existente]);
         }

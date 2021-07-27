@@ -20,9 +20,14 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/configuracion', 'SidebarController@configuracion')->name('configuracion');
+//compras
 Route::get('/compras/index', 'SidebarController@comprasIndex')->name('compras.index');
 Route::get('/compras/create', 'SidebarController@comprasCreate')->name('compras.create');
 Route::get('/compras/show/{compra_id}', 'SidebarController@comprasShow')->name('compras.show');
+// ventas
+Route::get('/ventas/index', 'SidebarController@ventasIndex')->name('ventas.index');
+Route::get('/ventas/create', 'SidebarController@ventasCreate')->name('ventas.create');
+Route::get('/ventas/show/{venta_id}', 'SidebarController@ventasShow')->name('ventas.show');
 
 // inventario
 Route::get('/inventario/index', 'SidebarController@inventarioIndex')->name('inventario.index');
@@ -44,6 +49,9 @@ Route::post('/registrar-nueva-compra', 'CompraController@registrarNuevaCompra')-
 Route::post('/eliminar-compra-registrada', 'CompraController@eliminarCompraRegistrada')->name('eliminarCompraRegistrada');
 Route::post('/cambiar-status-de-compra-a-recibida', 'CompraController@CambiarStatusDeCompraARecibida')->name('CambiarStatusDeCompraARecibida');
 Route::post('/cambiar-status-de-compra-a-pendiente', 'CompraController@CambiarStatusDeCompraAPendiente')->name('CambiarStatusDeCompraAPendiente');
+
+Route::post('recibir_compra', 'CompraController@recibir_compra')->name('recibir_compra');
+Route::post('compra_en_camino', 'CompraController@compra_en_camino')->name('compra_en_camino');
 
 
 

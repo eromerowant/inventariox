@@ -267,7 +267,7 @@ return [
         [
             'text'    => 'Compras',
             'url'     => '#',
-            'icon' => 'fas fa-shopping-cart',
+            'icon'    => 'fas fa-shopping-cart',
             'submenu' => [
                 [
                     'text' => 'Todas',
@@ -277,6 +277,23 @@ return [
                 [
                     'text' => 'Nueva',
                     'route'  => 'compras.create',
+                    'icon' => '',
+                ],
+            ],
+        ],
+        [
+            'text'    => 'Ventas',
+            'url'     => '#',
+            'icon'    => 'fa fa-money',
+            'submenu' => [
+                [
+                    'text' => 'Todas',
+                    'route'=> 'ventas.index',
+                    'icon' => '',
+                ],
+                [
+                    'text' => 'Nueva',
+                    'route'  => 'ventas.create',
                     'icon' => '',
                 ],
             ],

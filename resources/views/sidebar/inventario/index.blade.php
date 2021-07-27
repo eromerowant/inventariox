@@ -24,7 +24,6 @@
                                              <th>Nombre</th>
                                              <th>Caracteristicas</th>
                                              <th>Cantidad Disponible</th>
-                                             <th>Total de Productos</th>
                                              <th class="no_exportar">Acciones</th>
                                           </tr>
                                        </thead>
@@ -40,7 +39,6 @@
                                                     @endforeach
                                                 </td>
                                                 <td>{{ $ejemplar->cantidad_disponible }}</td>
-                                                <td>{{ count($ejemplar->productos) }}</td>
                                                 <td>
                                                    <button type="button" class="btn btn-info btn-sm">Botón</button>
                                                 </td>

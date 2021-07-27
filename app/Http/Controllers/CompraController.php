@@ -183,4 +183,44 @@ class CompraController extends Controller
         return response()->json(['error' => 'hubo un error']);
     }
 
+    public function recibir_compra(Request $request)
+    {
+        $compra = Compra::where('id', $request->get('compra_id'))->first();
+        $compra->status = 2; // recibida
+        $compra->update();
+
+        // Actualizamos el inventario
+        $ejemplar = Ejemplare::where('id', $compra->ejemplar_id)->first();
+        $ejemplar->cantidad_disponible =  $ejemplar->cantidad_disponible + $compra->cantidad;
+        $ejemplar->update();
+
+        // Productos en estado disponible
+        foreach ($compra->productos as $producto) {
+            $producto->status = 2; // Disponibles
+            $producto->update();
+        }
+
+        return redirect()->action([SidebarController::class, 'comprasIndex']);
+    }
+
+    public function compra_en_camino(Request $request)
+    {
+        $compra = Compra::where('id', $request->get('compra_id'))->first();
+        $compra->status = 1; // en camino
+        $compra->update();
+
+        // Actualizamos el inventario
+        $ejemplar = Ejemplare::where('id', $compra->ejemplar_id)->first();
+        $ejemplar->cantidad_disponible =  $ejemplar->cantidad_disponible - $compra->cantidad;
+        $ejemplar->update();
+
+        // Productos en estado disponible
+        foreach ($compra->productos as $producto) {
+            $producto->status = 1; // En camino
+            $producto->update();
+        }
+
+        return redirect()->action([SidebarController::class, 'comprasIndex']);
+    }
+
 }

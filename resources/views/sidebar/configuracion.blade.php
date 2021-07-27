@@ -311,6 +311,7 @@
                 },
 
                 addNewAtributoValido(nombre) {
+                    console.log(nombre);
                     this.newEntidad.atributos.push({
                         nombre: nombre,
                         valores: []

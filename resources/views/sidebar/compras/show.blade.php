@@ -65,6 +65,27 @@
                         </div>
                      </div>
                   </div>
+
+                  @if ($compra->status == 1)
+                     <div class="row">
+                        <div class="col">
+                           <form action="{{ route('recibir_compra', ['compra_id' => $compra->id]) }}" method="POST">
+                              @csrf
+                              <button class="btn btn-success btn-sm" type="submit">Recibir compra</button>
+                           </form>
+                        </div>
+                     </div>
+                  @else
+                     <div class="row">
+                        <div class="col">
+                           <form action="{{ route('compra_en_camino', ['compra_id' => $compra->id]) }}" method="POST">
+                              @csrf
+                              <button class="btn btn-danger btn-sm" type="submit">Compra en camino</button>
+                           </form>
+                        </div>
+                     </div>
+                  @endif
+
                </div>
             </div>
          </div>

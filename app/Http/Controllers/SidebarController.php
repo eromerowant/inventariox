@@ -49,4 +49,20 @@ class SidebarController extends Controller
 
         return view('sidebar.compras.show', ['compra' => $compra]);
     }
+
+    public function ventasIndex()
+    {
+        $ventas_pendientes = Compra::where('status', 1)->get(); // ventas pendientes
+        $ventas_culminadas = Compra::where('status', 2)->get(); // ventas culminadas
+
+        return view('sidebar.ventas.index', [
+            'ventas_pendientes' => $ventas_pendientes,
+            'ventas_culminadas' => $ventas_culminadas
+        ]);
+    }
+
+    public function ventasCreate()
+    {
+        return view('sidebar.ventas.create');
+    }
 }
