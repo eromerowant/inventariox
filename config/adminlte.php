@@ -284,7 +284,7 @@ return [
         [
             'text'    => 'Ventas',
             'url'     => '#',
-            'icon'    => 'fa fa-money',
+            'icon'    => 'fab fa-sellcast',
             'submenu' => [
                 [
                     'text' => 'Todas',
