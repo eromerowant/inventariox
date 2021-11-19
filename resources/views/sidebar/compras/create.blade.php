@@ -10,87 +10,81 @@
 
         {{-- nueva-compra --}}
         <div class="container-fluid">
-            <div class="row text-center">
-                <div class="col">
-                    <h3>Registra una Nueva Compra:</h3>
-                </div>
-            </div>
 
-            <div class="row">
+            <div class="row mt-3">
                 <div class="col">
-                    <form>
-                    <div class="row">
-                        <div class="col">
-                        <div class="form-group">
-                            <label>Selecciona el Producto:</label>
-                            <select @change="traerLaEntidadDeBaseDeDatos()" v-model="nueva_compra.entidadSeleccionada" class="form-control" required>
-                                <option value="" disabled selected>-- Seleccione --</option>
-                                @foreach ($entidades as $entidad)
-                                    <option value="{{ $entidad->nombre }}">{{ $entidad->nombre }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        </div>
-                    </div>
-                    <div class="row" v-for="atributo in atributos" :key="atributo.nombre">
-
-                        <div class="col">
-                            <div class="form-group">
-                                <label>@{{ atributo.nombre }}</label>
-                                <select v-model="nueva_compra.atributos_selected[atributo.nombre]" class="form-control" required>
-                                    <option v-for="valor in atributo.valores" :key="valor" :value="valor">@{{ valor }}</option>
-                                </select>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h3 class="text-center">Registra una Nueva Compra:</h3>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label>Selecciona el Producto:</label>
+                                        <select @change="traerLaEntidadDeBaseDeDatos()" v-model="nueva_compra.entidadSeleccionada" class="form-control" required>
+                                            <option value="" disabled selected>-- Seleccione --</option>
+                                            @foreach ($entidades as $entidad)
+                                                <option value="{{ $entidad->nombre }}">{{ $entidad->nombre }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" v-for="atributo in atributos" :key="atributo.nombre">
+    
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label>@{{ atributo.nombre }}</label>
+                                        <select v-model="nueva_compra.atributos_selected[atributo.nombre]" class="form-control" required>
+                                            <option v-for="valor in atributo.valores" :key="valor" :value="valor">@{{ valor }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+    
+                            </div>
+                            <hr class="bg-dark">
+                            <br>
+    
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label>Cantidad de Unidades</label>
+                                        <input v-model="nueva_compra.cantidad_de_unidades" type="number" class="form-control" min="1" step="1" required>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label>Monto Total Pagado</label>
+                                        <input v-model="nueva_compra.monto_total_pagado" type="number" class="form-control" min="0" step="50" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label>Monto Unitario (c/u)</label>
+                                        <input v-model="monto_unitario" type="number" class="form-control" readonly>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label>Precio Sugerido (c/u)</label>
+                                        <input v-model="nueva_compra.precio_sugerido" type="number" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <button @click.prevent="registrarNuevaCompraEnBaseDeDatos()" class="btn btn-outline-success">Registrar Compra</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
                     </div>
-
-                    <div class="row">
-                        <div class="col">
-                        <div class="form-group">
-                            <label>Cantidad de Unidades</label>
-                            <input v-model="nueva_compra.cantidad_de_unidades" type="number" class="form-control" min="1" step="1" required>
-                        </div>
-                        </div>
-                        <div class="col">
-                        <div class="form-group">
-                            <label>Monto Total Pagado</label>
-                            <input v-model="nueva_compra.monto_total_pagado" type="number" class="form-control" min="0" step="50" required>
-                        </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                        <div class="form-group">
-                            <label>Monto Unitario (c/u)</label>
-                            <input v-model="monto_unitario" type="number" class="form-control" readonly>
-                        </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                        <div class="form-group">
-                            <label>Precio Sugerido (c/u)</label>
-                            <input v-model="nueva_compra.precio_sugerido" type="number" class="form-control" required>
-                        </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                        <div class="form-group">
-                            <label>Ingrese el enlace completo al sitio donde se realizó la compra:</label>
-                            <input v-model="nueva_compra.enlace_url" type="text" class="form-control" placeholder="Ejemplo: https://www.proveedor.com" required>
-                        </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                        <div class="form-group">
-                            <button @click.prevent="registrarNuevaCompraEnBaseDeDatos()" class="btn btn-outline-success">Registrar Compra</button>
-                        </div>
-                        </div>
-                    </div>
-                    </form>
                 </div>
             </div>
         </div>

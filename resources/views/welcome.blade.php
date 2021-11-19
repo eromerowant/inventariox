@@ -6,8 +6,16 @@
     <h1>Dashboard</h1>
 @stop
 
+@section('css')
+    <style>
+        a {
+            border: 2px solid black;
+        }
+    </style>
+@stop
+
 @section('content')
-    <p>Welcome to this beautiful admin panel.</p>
+    <a target="blank" href="https://www.facebook.com">Este es un enlace</a>
 @stop
 
 @section('css')

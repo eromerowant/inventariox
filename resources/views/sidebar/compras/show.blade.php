@@ -34,6 +34,9 @@
                         </div>
                      @endforeach
                   </div>
+
+                  <hr class="bg-dark">
+                  <br>
    
                   <div class="row">
                      <div class="col">
@@ -56,8 +59,6 @@
                            <input type="text" class="form-control" value="{{ $compra->productos[0]->costo_unitario }}" readonly>
                         </div>
                      </div>
-                  </div>
-                  <div class="row">
                      <div class="col">
                         <div class="form-group">
                            <label>Precio Sugerido (c/u)</label>

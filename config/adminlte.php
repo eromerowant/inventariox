@@ -260,26 +260,19 @@ return [
             'icon' => 'fas fa-cogs',
         ],
         [
+            'text' => 'Nueva Compra',
+            'route'  => 'compras.create',
+            'icon' => 'fas "fa fa-cart-plus',
+        ],
+        [
+            'text' => 'Listado de Compras',
+            'route'=> 'compras.index',
+            'icon' => 'fas fa-shopping-cart',
+        ],
+        [
             'text' => 'Inventario',
             'route'=> 'inventario.index',
             'icon' => 'fas fa-sitemap',
-        ],
-        [
-            'text'    => 'Compras',
-            'url'     => '#',
-            'icon'    => 'fas fa-shopping-cart',
-            'submenu' => [
-                [
-                    'text' => 'Todas',
-                    'route'=> 'compras.index',
-                    'icon' => '',
-                ],
-                [
-                    'text' => 'Nueva',
-                    'route'  => 'compras.create',
-                    'icon' => '',
-                ],
-            ],
         ],
         [
             'text'    => 'Ventas',
