@@ -14,131 +14,93 @@
     <div id="appVue">
 
         <div class="container-fluid">
-            <!-- Page Heading -->
+            <!-- USER INPUT -->
             <div class="row mt-3">
                 <form>
                     <div class="form-group">
                         <label for="formGroupExampleInput">Nombre de la Entidad:</label>
-                        <input @keyup.prevent="findEntidad" v-model="buscarNombreEntidad" type="text" class="form-control" placeholder="Buscar...">
+                        <input @keyup.prevent="handleUserInput" v-model="WORD_TO_SEARCH" type="text" class="form-control" placeholder="Buscar...">
                     </div>
                 </form>
             </div>
-            <!-- VISTA UNO -->
+
             <div class="row">
-                <!-- entidad REGISTRADA -->
-                <ul v-if="nombreExisteEnRegistroDeEntidades">
-                    <li v-for="(producto, index) in nombresDeEntidadesRegistradas" :key="index">
-                        <a href="#" @click.prevent="verEntidadRegistrada(producto)">
-                        Ver <strong>@{{ producto.nombreEntidad }}</strong>
+                {{-- PASO UNO --}}
+                <div class="col-3">
+                    <!-- entidad REGISTRADA -->
+                    <ul v-if="IS_WORD_IN_DB_ENTITIES">
+                        <li v-for="(entity, index) in ENTITIES_LIKE_QUERY" :key="index">
+                            <a href="#" @click.prevent="showRegisteredEntity(entity)">
+                                Entidad registrada: <strong>@{{ entity.name }} (@{{ entity.attributes.length }} atributos)</strong>
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <!-- entidad NUEVA -->
+                    <div v-else-if="!IS_WORD_IN_DB_ENTITIES && WORD_TO_SEARCH.length > 0">
+                        <a @click.prevent="handleNewPossibleEntity" href="#">
+                            <p>Registrar <strong>@{{ WORD_TO_SEARCH }}</strong> como nuevo nombre de entidad</p>
                         </a>
-                    </li>
-                </ul>
-                <!-- /entidad REGISTRADA -->
-                <!-- entidad NUEVA -->
-                <div v-else-if="!nombreExisteEnRegistroDeEntidades && buscarNombreEntidad.length > 2">
-                    <a @click.prevent="verNuevoNombreDeEntidad" href="#">
-                        <p>Registrar <strong>@{{ buscarNombreEntidad }}</strong> como nuevo nombre de entidad</p>
-                    </a>
+                    </div>
+                    
+                    {{-- TODAS --}}
+                    <ul v-else>
+                        <li v-for="(entity, index) in ENTITIES_IN_DATABASE" :key="entity.id">
+                            <a href="#" @click.prevent="showRegisteredEntity(entity)">
+                                Ver <strong>@{{ entity.name }} (@{{ entity.attributes.length }} atributos)</strong>
+                            </a>
+                        </li>
+                    </ul>
+
                 </div>
-                <!-- /entidad NUEVA -->
-                {{-- TODO --}}
-                <ul v-else>
-                    <li v-for="(producto, index) in registroDeEntidades" :key="producto.id">
-                        <a href="#" @click.prevent="verEntidadRegistrada(producto)">
-                        Ver <strong>@{{ producto.nombreEntidad }}</strong>
-                        </a>
-                    </li>
-                </ul>
-                {{-- /TODO --}}
-            </div>
-            <!-- /VISTA UNO -->
-            
 
-            <!-- VISTA DOS -->
-            <div class="row">
-                <div class="col-md-10 offset-md-1 text-center">
-                <!-- ENTIDAD NUEVA -->
-                <form v-if="agregarNuevoNombreDeEntidad">
-                    <div class="form-group text-center">
-                    <label class="text-center">Nuevo Nombre de la entidad</label>
-                    <input v-model="newEntidad.nombreEntidad" type="text" class="form-control text-center" readonly>
-                    </div>
-                    <h5 class="text-center">Atributos</h5>
-                    <div class="form-group text-center">
-                    <label class="sr-only">Nombre del Atributo Nuevo</label>
-                    <div class="input-group mb-2">
-                        <input v-model="newAtributo.nombre" type="text" class="form-control" placeholder="Nuevo Atributo...">
-                        <div class="input-group-append">
-                        <button :disabled="atributoNoValidoParaSerAgregado" @click.prevent="handleNewAtributo" class="input-group-text btn btn-outline-success">
-                            <i class="fa fa-plus"></i>
-                        </button>
+                {{-- PASO DOS --}}
+                <div class="col-9">
+                    <!-- MOSTRAR ENTIDAD SELECCIONADA -->
+                    <form v-if="SHOW_REGISTERED_ENTITY">
+                        <div class="form-group text-center">
+                            <label>Entidad</label>
+                            <div class="input-group mb-2">
+                                <input v-model="SELECTED_ENTITY.name" type="text" class="form-control text-center" readonly>
+                                <div class="input-group-append">
+                                    <a href="#" class="btn btn-outline-info btn-sm"><i class="fas fa-edit"></i></a>
+                                    <a @click.prevent="removeEntityFromDatabase" href="#" class="btn btn-outline-danger btn-sm"><i class="fas fa-times-circle"></i></a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <small v-if="atributoNoValidoParaSerAgregado" class="text-danger">El Atributo @{{ newAtributo.nombre }} no es válido...</small>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-col" v-for="(atributo, index) in newEntidad.atributos" :key="index">
-                            <!-- TARJETAS - entidad registrada -->
-                            <tarjeta-de-atributo 
-                            :atributo="atributo"
-                            :remove-atributo="removeAtributo"
-                            @new-valor="handleNewValor"
-                            @remove-valor="removeIncomingValue"
-                            />
-                            <!-- /TARJETAS - entidad registrada -->
+                        <div class="form-group text-center">
+                            <label>Nombre del Atributo Nuevo</label>
+                            <div class="input-group mb-2">
+                                <input v-model="NEW_ATTRIBUTE_NAME" type="text" class="form-control" placeholder="Ejemplo: Tamaño">
+                                <div class="input-group-append">
+                                    <button @click.prevent="handleNewAtributo" class="input-group-text btn btn-outline-success">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    
-                </form>
-                <!-- /ENTIDAD NUEVA -->
-    
-                <!-- ENTIDAD REGISTRADA -->
-                <form v-else-if="agregarNombreDeEntidadExistente">
-                    <div class="form-group text-center">
-                    <label class="sr-only">Nombre del Atributo Nuevo</label>
-                    <div class="input-group mb-2">
-                        <input v-model="newEntidad.nombreEntidad" type="text" class="form-control text-center" readonly>
-                        <div class="input-group-append">
-                        <a href="#" class="btn btn-outline-info btn-sm"><i class="fas fa-edit"></i></a>
-                        <a @click.prevent="removeProductNameRegistered(newEntidad.nombreEntidad, newEntidad.id)" href="#" class="btn btn-outline-danger btn-sm"><i class="fas fa-times-circle"></i></a>
+                        <div class="form-row">
+                            <div class="form-col" v-for="(atributo, index) in SELECTED_ENTITY.attributes" :key="index">
+                                <!-- TARJETAS - entidad registrada -->
+                                <tarjeta-de-atributo 
+                                    :atributo="atributo"
+                                    :remove-atributo="removeAtributo"
+                                    @new-valor="handleNewValor"
+                                    @remove-valor="removeValueFromAttributeInDataBase"
+                                    @change-attribute-name="changeAttributeName"
+                                />
+                                <!-- /TARJETAS - entidad registrada -->
+                            </div>
                         </div>
-                    </div>
-                    </div>
-                    <div class="form-group text-center">
-                    <label class="sr-only">Nombre del Atributo Nuevo</label>
-                    <div class="input-group mb-2">
-                        <input v-model="newAtributo.nombre" type="text" class="form-control" placeholder="Nuevo Atributo...">
-                        <div class="input-group-append">
-                        <button :disabled="atributoNoValidoParaSerAgregado" @click.prevent="handleNewAtributo" class="input-group-text btn btn-outline-success">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                        </div>
-                    </div>
-                    <small v-if="atributoNoValidoParaSerAgregado" class="text-danger">El Atributo @{{ newAtributo.nombre }} no es válido...</small>
-                    </div>
-
-                    <div class="form-row">
-                    <div class="form-col" v-for="(atributo, index) in newEntidad.atributos" :key="index">
-                        <!-- TARJETAS - entidad registrada -->
-                        <tarjeta-de-atributo 
-                        :atributo="atributo"
-                        :remove-atributo="removeAtributo"
-                        @new-valor="handleNewValor"
-                        @remove-valor="removeIncomingValue"
-                        />
-                        <!-- /TARJETAS - entidad registrada -->
-                    </div>
-                    </div>
 
 
-                    
-                </form>
-                <!-- /ENTIDAD REGISTRADA -->
+                        
+                    </form>
+
                 </div>
             </div>
-            <!-- /VISTA DOS -->
+        
 
         </div>
 
@@ -185,448 +147,164 @@
             data() {
                 return {
 
-                    registroDeEntidades: [], // esto se llena desde la base de datos (source of truth)
+                    ENTITIES_IN_DATABASE: [], // esto se llena desde la base de datos (source of truth)
 
-                    buscarNombreEntidad: "",
+                    WORD_TO_SEARCH: "",
 
-                    newEntidad: {
+                    SELECTED_ENTITY: {
                         id: null,
-                        nombreEntidad: '',
-                        atributos: []
+                        name: '',
+                        attributes: []
                     },
 
-                    newAtributo: {
-                        nombre: '',
-                        valores: []
-                    },
+                    NEW_ATTRIBUTE_NAME: "",
 
-                    atributoEnModoEdicion: false,
+                    IS_WORD_IN_DB_ENTITIES: false,
+                    ENTITIES_LIKE_QUERY: [],
+                    SHOW_REGISTERED_ENTITY: false,
+                    DONT_ADD_ATTRIBUTE: false,
 
-                    nombreExisteEnRegistroDeEntidades: false,
-                    nombresDeEntidadesRegistradas: [],
-                    agregarNuevoNombreDeEntidad: false,
-                    agregarNombreDeEntidadExistente: false,
-                    atributoNoValidoParaSerAgregado: false,
-
-                    formCompra: {
-                        nombreDeEntidadSeleccionadaParaComprar: "",
-                        cantidadItemsEnCompra: null,
-                        montoTotalPagado: null,
-                        costoPorUnidad: null,
-                        precioSugerido: null,
-                        enlaceURLDeLaCompra: null,
-                        atributos: {}
-                    },
-
-                    comprasRegistradasYPendientes: [],
-                    comprasRegistradasYRecibidas: [],
-
-                    cambiarStatusDeLaCompraConId: null,
-                    mensajeDelBotonModalParaCambioDeStatus: null,
-
-                    // Inventario
-                    ejemplares_en_base_de_datos: [],
-                    vistaInventario: {
-                        nombre_seleccionado: null,
-                        atributos_de_nombre_seleccionado: [],
-                    },
-                    actualizar_ejemplaresDesdeBaseDeDatos: false,
                 }
 
             },
 
             methods: {
-                findEntidad() {
-                    if (this.buscarNombreEntidad.length > 2) {
-                        let existe = false;
-                        let nombres = [];
-                        this.registroDeEntidades.map(entidad => {
-                            if ((entidad.nombreEntidad.toLowerCase()).includes((this.buscarNombreEntidad)
-                                    .toLowerCase())) {
-                                existe = true;
-                                nombres.push(entidad);
-                            }
-                        })
-                        this.nombresDeEntidadesRegistradas = nombres;
-                        this.nombreExisteEnRegistroDeEntidades = existe;
+                handleUserInput() {
+                    if ( this.WORD_TO_SEARCH.length > 0 ) {
+                        this.ENTITIES_LIKE_QUERY = this.ENTITIES_IN_DATABASE.filter(item => item.name.toLowerCase().includes( (this.WORD_TO_SEARCH).toLowerCase() ))
+                        if ( this.ENTITIES_LIKE_QUERY.length ) {
+                            this.IS_WORD_IN_DB_ENTITIES = true;
+                        } else {
+                            this.IS_WORD_IN_DB_ENTITIES = false;    
+                        }
                     } else {
-                        this.nombreExisteEnRegistroDeEntidades = false;
-                        this.agregarNuevoNombreDeEntidad = false;
-                        this.agregarNombreDeEntidadExistente = false;
-                        this.newEntidad = {
-                            nombreEntidad: '',
-                            atributos: []
+                        this.ENTITIES_LIKE_QUERY = [];
+                        this.IS_WORD_IN_DB_ENTITIES = false;
+                        this.SHOW_REGISTERED_ENTITY = false;
+                        this.SELECTED_ENTITY = {
+                            id: null,
+                            name: '',
+                            attributes: []
                         };
                     }
                 },
 
-                verEntidadRegistrada(nombre) {
-                    this.newEntidad = nombre;
-                    this.agregarNombreDeEntidadExistente = true;
+                showRegisteredEntity(nombre) {
+                    this.SELECTED_ENTITY = this.ENTITIES_IN_DATABASE.find(item => item.id === nombre.id);
+                    this.SHOW_REGISTERED_ENTITY = true;
                 },
 
-                verNuevoNombreDeEntidad() {
-                    this.newEntidad.nombreEntidad = this.buscarNombreEntidad;
-                    this.agregarNuevoNombreDeEntidad = true;
-                    this.registroDeEntidades.push(this.newEntidad);
-                    this.registrarNuevaEntidadEnBaseDeDatos(this.newEntidad.nombreEntidad);
+                async handleNewPossibleEntity() {
+                    this.SELECTED_ENTITY.name = this.WORD_TO_SEARCH;
+                    await this.registrarNuevaEntidadEnBaseDeDatos(this.SELECTED_ENTITY.name);
                 },
 
-                registrarNuevaEntidadEnBaseDeDatos(nuevo_nombre_entidad) {
-                    axios.post("{{ route('storeNewEntidad') }}", {
-                            'nombre_entidad': nuevo_nombre_entidad
-                        })
-                        .then(res => {
-                            if (res.data.entidad_agregada) {
-                                this.newEntidad.id = res.data.entidad_agregada.id;
-                            }
-                        })
-                        .catch(err => {
-                            console.log(err)
-                        })
+                async registrarNuevaEntidadEnBaseDeDatos(nuevo_nombre_entidad) {
+                    let response = await axios.post("{{ route('storeNewEntidad') }}", {'name': nuevo_nombre_entidad})
+                        .then(res => res.data.entidad_registrada)
+                        .catch(err => {console.error(err)})
+
+                    this.ENTITIES_IN_DATABASE.push( response )
+                    this.SELECTED_ENTITY = response;
+                    this.SHOW_REGISTERED_ENTITY = true;
                 },
 
-                handleNewAtributo() {
-                    if (this.newAtributo.nombre === "") {
-                        return;
-                    }
-
-                    if (this.atributoValido(this.newAtributo.nombre)) {
-                        this.addNewAtributoValido(this.newAtributo.nombre);
-                    } else {
-                        this.atributoNoValidoParaSerAgregado = true;
-                        setTimeout(() => {
-                            this.atributoNoValidoParaSerAgregado = false;
-                        }, 3000);
-                    }
-                },
-
-                atributoValido(nombre) {
-                    for (let i = 0; i < this.newEntidad.atributos.length; i++) {
-                        if (this.newEntidad.atributos[i].nombre === nombre) {
-                            return false;
+                async handleNewAtributo() {
+                    let name          = this.NEW_ATTRIBUTE_NAME;
+                    let entidad_id    = this.SELECTED_ENTITY.id;
+                    let new_attribute = await axios.post("{{ route('addNewAttributeInDataBase') }}", {name, entidad_id}).then(res =>res.data);
+                    this.ENTITIES_IN_DATABASE = this.ENTITIES_IN_DATABASE.map(item => {
+                        if ( item.id === entidad_id ) {
+                            item.attributes = [...item.attributes, new_attribute];
                         }
-                    }
-                    return true;
+                        return item;
+                    });
+                    this.NEW_ATTRIBUTE_NAME = "";
                 },
 
                 addNewAtributoValido(nombre) {
-                    console.log(nombre);
-                    this.newEntidad.atributos.push({
-                        nombre: nombre,
+                    this.SELECTED_ENTITY.attributes.push({
+                        name: nombre,
                         valores: []
                     });
                     this.newAtributo.nombre = "";
                 },
 
-                removeAtributo(name) {
-                    this.newEntidad.atributos = this.newEntidad.atributos.filter(atributo => atributo.nombre !==
-                        name);
-                },
-
-                updateAtributosInDataBase(entidad) {
-                    let obj = {
-                        entidad_id: entidad.id,
-                        atributos: JSON.stringify(entidad.atributos),
-                    }
-
-                    axios.post("{{ route('updateAtributosDeEntidad') }}", obj)
-                        .then(res => {
-                            console.log(res.data);
-                        })
-                        .catch(err => {
-                            console.log(err)
-                        })
-                },
-
-                handleNewValor(request) {
-                    this.newEntidad.atributos.map(atributo => {
-                        if (atributo.nombre === request.atributoNombre) {
-                            atributo.valores.push(request.newValor);
+                async removeAtributo(attribute_id) {
+                    let entity = await axios.delete("{{ route('removeAttributeFromEntity') }}", {data: {attribute_id}}).then(res => res.data);
+                    this.ENTITIES_IN_DATABASE = this.ENTITIES_IN_DATABASE.map(item => {
+                        if ( item.id === entity.id ) {
+                            return entity;
                         }
-                    })
+                        return item;
+                    });
+                    this.SELECTED_ENTITY = entity;
                 },
 
-                removeIncomingValue(request) {
-                    this.newEntidad.atributos.map(atributo => {
-                        if (atributo.nombre === request.atributo) {
-                            atributo.valores = atributo.valores.filter(valor => valor !== request.value)
+                async handleNewValor(request) {
+                    let entity = await axios.post("{{ route('addNewValueToPossibleAttribute') }}", request).then(res => res.data);
+                    this.ENTITIES_IN_DATABASE = this.ENTITIES_IN_DATABASE.map(item => {
+                        if ( item.id === entity.id ) {
+                            return entity;
                         }
-                    })
+                        return item;
+                    });
+                    this.SELECTED_ENTITY = entity;
                 },
 
-                removeProductNameRegistered(nombre, id) {
-                    this.borrarEntidadExistenteEnBaseDeDatos(id);
-                    this.registroDeEntidades = this.registroDeEntidades.filter(producto => producto
-                        .nombreEntidad !== nombre);
-                    this.nombresDeEntidadesRegistradas = this.nombresDeEntidadesRegistradas.filter(producto =>
-                        producto.nombreEntidad !== nombre);
-                    this.newEntidad = {
-                        id: null,
-                        nombreEntidad: '',
-                        atributos: []
-                    };
-                    this.agregarNombreDeEntidadExistente = false;
+                async removeValueFromAttributeInDataBase(request) {
+                    let entity = await axios.delete("{{ route('removeValueFromAttributeInDatabase') }}", {data: {value_id: request}}).then(res => res.data);
+                    this.ENTITIES_IN_DATABASE = this.ENTITIES_IN_DATABASE.map(item => {
+                        if ( item.id === entity.id ) {
+                            return entity;
+                        }
+                        return item;
+                    });
+                    this.SELECTED_ENTITY = entity;
                 },
 
-                borrarEntidadExistenteEnBaseDeDatos(entidad_id) {
-                    axios.post("{{ route('borrarEntidadExistente') }}", {
-                            "entidad_id": entidad_id
-                        })
-                        .then(res => {
-                            console.log(res.data);
-                        }).catch(err => {
-                            console.log(err)
-                        })
+                async changeAttributeName(request){
+                    let entity = await axios.post("{{ route('updateAttributeInEntity') }}", request).then(res => res.data)
+                    this.ENTITIES_IN_DATABASE = this.ENTITIES_IN_DATABASE.map(item => {
+                        if ( item.id === entity.id ) {
+                            return entity;
+                        }
+                        return item;
+                    });
+                    this.SELECTED_ENTITY = entity;
                 },
 
-                handleNuevaCompra() {
-                    this.registrarNuevaCompraEnBaseDeDatos(this.formCompra);
-                    this.formCompra = {
-                        nombreDeEntidadSeleccionadaParaComprar: "",
-                        cantidadItemsEnCompra: null,
-                        montoTotalPagado: null,
-                        costoPorUnidad: null,
-                        precioSugerido: null,
-                        enlaceURLDeLaCompra: null,
-                        atributos: {}
-                    };
-                    setTimeout(() => {
-                        this.traerTodasLasComprasRegistradasYPendientesDeBaseDeDatos();
-                    }, 500);
-                },
-
-                handleCambioDeStatusDeCompra(compra_id, tipo_de_cambio) {
-                    this.cambiarStatusDeLaCompraConId = compra_id;
-                    switch (tipo_de_cambio) {
-                        case 'sin_recibir':
-                            document.querySelector('#button_show_modal_cambiar_status_compra_SIN_RECIBIR').click();
-                            break;
-                        case 'recibida':
-                            document.querySelector('#button_show_modal_cambiar_status_compra_recibida').click();
-                            break;
-
-                        default:
-                            break;
+                async removeEntityFromDatabase() {
+                    let entidad_id = this.SELECTED_ENTITY.id;
+                    let response = await axios.delete("{{ route('borrarEntidadExistente') }}", {data: {entidad_id}})
+                    if ( response.statusText === "OK" ) {
+                        this.ENTITIES_IN_DATABASE = this.ENTITIES_IN_DATABASE.filter(item => item.id !== entidad_id);
+    
+                        this.SELECTED_ENTITY = {
+                            id: null,
+                            name: '',
+                            attributes: []
+                        };
+    
+                        this.SHOW_REGISTERED_ENTITY = false;
                     }
-                },
 
-                cambiarStatusDeCompra(tipo_de_cambio) {
-                    switch (tipo_de_cambio) {
-                        case 'compra_recibida':
-                            this.cambiarStatus_de_compra_a_Recibida();
-                            setTimeout(() => {
-                                this.traerTodasLasComprasRegistradasYPendientesDeBaseDeDatos();
-                                this.traerTodasLasComprasRegistradasYRecibidasDeBaseDeDatos();
-                            }, 500);
-                            break;
-                        case 'compra_pendiente':
-                            this.cambiarStatus_de_compra_a_Pendiente();
-                            setTimeout(() => {
-                                this.traerTodasLasComprasRegistradasYPendientesDeBaseDeDatos();
-                                this.traerTodasLasComprasRegistradasYRecibidasDeBaseDeDatos();
-                            }, 500);
-                            break;
-
-                        default:
-                            break;
-                    }
-                },
-
-                cambiarStatus_de_compra_a_Pendiente() {
-                    axios.post("{{ route('CambiarStatusDeCompraAPendiente') }}", {
-                            compra_id: this.cambiarStatusDeLaCompraConId
-                        })
-                        .then(res => {
-                            console.log(res.data);
-                        }).catch(err => {
-                            console.log(err)
-                        })
-                    document.querySelector('#cerrar_modal_cambio_de_status_a_recibida').click();
-                },
-
-                cambiarStatus_de_compra_a_Recibida() {
-                    axios.post("{{ route('CambiarStatusDeCompraARecibida') }}", {
-                            compra_id: this.cambiarStatusDeLaCompraConId
-                        })
-                        .then(res => {
-                            console.log(res.data);
-                        }).catch(err => {
-                            console.log(err)
-                        })
-                    document.querySelector('#cerrar_modal_cambio_de_status_a_pendiente').click();
-                },
-
-                registrarNuevaCompraEnBaseDeDatos(nueva_compra) {
-                    axios.post("{{ route('registrarNuevaCompra') }}", nueva_compra)
-                        .then(res => {
-                            console.log(res.data);
-                        }).catch(err => {
-                            console.log(err)
-                        })
-                },
-
-                handleCompraRegistrada(id) {
-                    this.comprasRegistradasYPendientes = this.comprasRegistradasYPendientes.filter(compra => compra
-                        .id !== id);
-                },
-
-                eliminarCompra(id) {
-                    axios.post("{{ route('eliminarCompraRegistrada') }}", {
-                            compra_id: id
-                        })
-                        .then(res => {
-                            console.log(res.data);
-                        }).catch(err => {
-                            console.log(err)
-                        })
-                    setTimeout(() => {
-                        this.traerTodasLasComprasRegistradasYPendientesDeBaseDeDatos();
-                        this.traerTodasLasComprasRegistradasYRecibidasDeBaseDeDatos();
-                    }, 1000);
                 },
 
                 // antiRebote: _.debounce(function (callback, args) {
                 //   callback(args);
                 // }, 3000),
 
-                traerTodasLasEntidadesRegistradasDeBaseDeDatos() {
-                    axios.get("{{ route('entidadesRegistradas') }}")
-                        .then(res => {
-                            res.data.entidades_registradas.forEach(entidad_registrada => {
-                                let nueva_entidad = {
-                                    id: entidad_registrada.id,
-                                    nombreEntidad: entidad_registrada.nombre,
-                                    atributos: JSON.parse(entidad_registrada.atributos),
-                                }
-                                this.registroDeEntidades.push(nueva_entidad);
-                            })
-                        }).catch(err => {
-                            console.log(err)
-                        })
+                async getEntitiesFromDataBase() {
+                    this.ENTITIES_IN_DATABASE = await axios.get("{{ route('entidadesRegistradas') }}")
+                        .then(res => res.data.entidades_registradas)
+                        .catch(err => {console.error(err)});
                 },
 
-                traerTodasLasComprasRegistradasYPendientesDeBaseDeDatos() {
-                    axios.get("{{ route('comprasRegistradasYPendientes') }}")
-                        .then(res => {
-                            console.log(res.data.compras_registradas);
-                            this.comprasRegistradasYPendientes = res.data.compras_registradas;
-                        }).catch(err => {
-                            console.log(err)
-                        })
-                    this.actualizar_ejemplaresDesdeBaseDeDatos = true;
-                },
-
-                traerTodasLasComprasRegistradasYRecibidasDeBaseDeDatos() {
-                    axios.get("{{ route('comprasRegistradasYRecibidas') }}")
-                        .then(res => {
-                            console.log(res.data.compras_registradas);
-                            this.comprasRegistradasYRecibidas = res.data.compras_registradas;
-                        }).catch(err => {
-                            console.log(err)
-                        })
-                    this.actualizar_ejemplaresDesdeBaseDeDatos = true;
-                },
-
-                getStatusDeLaCompra(number) {
-                    let response = null;
-                    switch (number) {
-                        case "1":
-                            response = 'En espera';
-                            break;
-                        case "2":
-                            response = 'Recibida';
-                            break;
-
-                        default:
-                            break;
-                    }
-                    return response;
-                },
-
-                getEjemplaresEnBaseDeDatos() {
-                    axios.get("{{ route('VerEjemplares') }}")
-                        .then(res => {
-                            this.ejemplares_en_base_de_datos = res.data.ejemplares;
-                        }).catch(err => {
-                            console.log(err)
-                        })
-                    this.actualizar_ejemplaresDesdeBaseDeDatos = false;
-                    this.vistaInventario.nombre_seleccionado = null;
-                    this.vistaInventario.atributos_de_nombre_seleccionado = [];
-                },
-
-                handleNombreDeEjemplarSeleccionado(nombre_de_ejemplar_seleccionado) {
-                    this.vistaInventario.nombre_seleccionado = nombre_de_ejemplar_seleccionado;
-                    this.vistaInventario.atributos_de_nombre_seleccionado = this.ejemplares_en_base_de_datos[
-                        nombre_de_ejemplar_seleccionado];
-                },
-
-                getDateFormatted(value) {
-                    return moment(String(value)).format('DD/MM/YYYY HH:mm');
-                },
-
-                getDate_inAgoFormat(value) {
-                    return moment(String(value)).fromNow();
-                }
             }, // end methods
 
-
-            watch: {
-                newEntidad: {
-                    deep: true,
-
-                    handler(newVal) {
-                        this.registroDeEntidades = this.registroDeEntidades.map(producto => {
-                            if (producto.nombreEntidad === this.newEntidad.nombreEntidad) {
-                                return newVal;
-                            }
-                            return producto;
-                        })
-                        if (newVal.id !== undefined) {
-                            this.updateAtributosInDataBase(newVal);
-                        }
-                    }
-                },
-
-                actualizar_ejemplaresDesdeBaseDeDatos(newVal) {
-                    if (newVal) {
-                        console.log('se actualizaron los ejemplares desde base de datos');
-                        this.getEjemplaresEnBaseDeDatos();
-                    }
-                },
-
-            }, // end watch
-
-            computed: {
-                atributosAMostrar() {
-                    let response = [];
-                    if (this.formCompra.nombreDeEntidadSeleccionadaParaComprar === "") {
-                        return [];
-                    }
-                    let producto = this.registroDeEntidades.filter(producto => producto.nombreEntidad === this
-                        .formCompra.nombreDeEntidadSeleccionadaParaComprar);
-                    response = producto.map(producto => producto.atributos);
-                    return response[0];
-                },
-
-                costoUnitario() {
-                    let response = null;
-                    if (this.formCompra.cantidadItemsEnCompra !== null && this.formCompra.montoTotalPagado !==
-                        null) {
-                        response = (parseFloat(this.formCompra.montoTotalPagado) / parseFloat(this.formCompra
-                            .cantidadItemsEnCompra)).toFixed(2);
-                    }
-                    this.formCompra.costoPorUnidad = response;
-                    return response;
-                }
-            },
-
-            mounted: function() {
-                this.traerTodasLasEntidadesRegistradasDeBaseDeDatos();
-                this.traerTodasLasComprasRegistradasYPendientesDeBaseDeDatos();
-                this.traerTodasLasComprasRegistradasYRecibidasDeBaseDeDatos();
-                this.actualizar_ejemplaresDesdeBaseDeDatos = true;
+            mounted: async function() {
+                await this.getEntitiesFromDataBase();
             },
 
         })
@@ -641,57 +319,53 @@
             <div>
                 <div class="card m-2" style="width: 18rem;">
                     <div class="card-body">
-                    <h5 class="card-title">
                         <div class="row" v-if="!atributoEnEdicion">
-                        <div class="col">
-                            <strong>@{{ atributo . nombre }}</strong>
-                        </div>
-                        <div class="col text-right">
-                            <a @click.prevent="atributoEnEdicion = !atributoEnEdicion" href="#" class="btn btn-outline-info btn-sm"><i class="fas fa-edit"></i></a>
-                            <a @click.prevent="removeAtributo(atributo.nombre)" href="#" class="btn btn-outline-danger btn-sm"><i class="fas fa-times-circle"></i></a>
-                        </div>
+                            <div class="col">
+                                <strong>@{{ atributo.name }}</strong>
+                            </div>
+                            <div class="col text-right">
+                                <a @click.prevent="atributoEnEdicion = !atributoEnEdicion" href="#" class="btn btn-outline-info btn-sm"><i class="fas fa-edit"></i></a>
+                                <a @click.prevent="removeAtributo(atributo.id)" href="#" class="btn btn-outline-danger btn-sm"><i class="fas fa-times-circle"></i></a>
+                            </div>
                         </div>
 
                         <div class="row" v-else-if="atributoEnEdicion">
-                        <div class="col">
-                            <form>
-                                <div class="form-group text-center">
-                                <div class="input-group mb-2">
-                                    <input v-model="atributo.nombre" type="text" class="form-control">
-                                    <div class="input-group-append">
-                                    <button @click.prevent="atributoEnEdicion = !atributoEnEdicion" class="input-group-text btn btn-outline-danger"><i class="fas fa-times-circle"></i></button>
+                            <div class="col">
+                                <form>
+                                    <div class="form-group text-center">
+                                    <div class="input-group mb-2">
+                                        <input @change="handleAttributeInput($event, atributo)" type="text" class="form-control" :value="atributo.name" >
+                                        <div class="input-group-append">
+                                            <button @click.prevent="atributoEnEdicion = !atributoEnEdicion" class="input-group-text btn btn-outline-danger"><i class="fas fa-times-circle"></i></button>
+                                        </div>
                                     </div>
-                                </div>
-                                </div>
-                            </form>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                        </div>
-
-                    </h5>
                     </div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item" v-for="(valor, pos) in atributo.valores" :key="pos">
-                        <div class="row">
-                            <div class="col">
-                            @{{ valor }}
-                            </div>
-                            <div class="col">
-                                <a href="#" class="btn btn-outline-info btn-sm"><i class="fas fa-edit"></i></a>
-                                <a @click.prevent="removeValue(valor, atributo.nombre)" href="#" class="btn btn-outline-danger btn-sm"><i class="fas fa-times-circle"></i></a>
-                            </div>
-                        </div>
-                        </li>
-                        <li class="list-group-item">
-                        <form>
-                            <div class="form-group text-center">
-                            <div class="input-group mb-2">
-                                <input v-model="newValor" type="text" class="form-control" placeholder="Nuevo Valor...">
-                                <div class="input-group-append">
-                                    <button @click.prevent="handleNewValor(atributo.nombre)" class="input-group-text btn btn-outline-success"><i class="fa fa-plus"></i></button>
+                        <li class="list-group-item" v-for="(valor, pos) in atributo.values" :key="pos">
+                            <div class="row">
+                                <div class="col">
+                                    @{{ valor.name }}
+                                </div>
+                                <div class="col text-right">
+                                    <a @click.prevent="removeValueInCard(valor.id)" href="#" class="btn btn-outline-danger btn-sm"><i class="fas fa-times-circle"></i></a>
                                 </div>
                             </div>
-                            </div>
-                        </form>
+                        </li>
+                        <li class="list-group-item">
+                            <form>
+                                <div class="form-group text-center">
+                                    <div class="input-group mb-2">
+                                        <input v-model="newValor" type="text" class="form-control" placeholder="Nuevo Valor...">
+                                        <div class="input-group-append">
+                                            <button @click.prevent="handleNewValueInCard(atributo.id)" class="input-group-text btn btn-outline-success"><i class="fa fa-plus"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                         </li>
                     </ul>
                 </div>
@@ -701,34 +375,35 @@
                 return {
                     atributoEnEdicion: false,
                     newAtributo: "",
-                    newValor: ""
+                    newValor: "",
+                    attributeName: this.atributo.name,
                 }
             },
 
             props: ['atributo', 'removeAtributo'],
 
             methods: {
-                handleNewValor(atributoNombre) {
-                    if (this.newValor === "") {
-                        return;
-                    }
+                handleNewValueInCard(attr_id) {
+                    if (this.newValor === "") {return;}
+                    let newValue = this.newValor;
 
-                    let obj = {
-                        atributoNombre,
-                        newValor: this.newValor
-                    }
-                    this.$emit('new-valor', obj);
+                    this.$emit('new-valor', {attr_id, newValue});
                     this.newValor = "";
                 },
 
-                removeValue(value, atributo) {
+                removeValueInCard(value_id) {
+                    this.$emit('remove-valor', value_id);
+                },
+                handleAttributeInput(e, attr){
                     let obj = {
-                        value,
-                        atributo
+                        new_value: e.target.value,
+                        attribute_id: attr.id,
                     }
-                    this.$emit('remove-valor', obj);
-                }
-            } // end Methods
+                    this.$emit('change-attribute-name', obj);
+                },
+
+            }, // end Methods
+
         })
 
 

@@ -7,80 +7,67 @@ use App\Bitacora;
 use App\Entidade;
 use Illuminate\Http\Request;
 
+use App\PossibleAttribute;
+use App\PossibleEntity;
+
 class EntidadeController extends Controller
 {
 
     public function index()
     {
-        $entidades_existentes = Entidade::all();
+        $entidades_existentes = PossibleEntity::with('attributes', 'attributes.values')->get();
         return response()->json(['entidades_registradas' => $entidades_existentes]);
     }
 
     public function storeNewEntidad(Request $request)
     {
-        if (!empty($request->input('nombre_entidad'))) {
-            //revisamos la base de datos 
-            $entidades_existentes = Entidade::all();
-
-            foreach ($entidades_existentes as $key => $value) {
-                if ($value->nombre === $request->input('nombre_entidad')) {
-                    return response()->json(['entidad_existente' => $value]);
-                }
-            }
-            $entidad = new Entidade();
-            $entidad->nombre = $request->input('nombre_entidad');
-            $entidad->atributos = "[]";
-            $entidad->save();
-
-            return response()->json(['entidad_agregada' => $entidad]);
+        if ( !$request->get('name') ) {
+            return response()->json([
+                'message' => "Por favor envía el nombre de entidad",
+            ], 400);
         }
-        return response()->json(['error' => 'Hubo un error']);
-    }
+        $name = $request->input('name');
 
-    public function storeNewAtributo(Request $request)
-    {
-        if (!empty($request->input('entidad_id'))) {
-            $entidad_existente = Entidade::where('id', $request->input('entidad_id'))->first();
-            $entidad_existente->atributos = $request->input('atributos');
-            $entidad_existente->update();
-
-            $bitacora = new Bitacora();
-            $el_usuario =  "el usuario: ".Auth::user()->name." con ID: ".Auth::user()->id;
-            $bitacora->suceso = $el_usuario." actualizó los atributos de la entidad con id: ".$entidad_existente->id;
-            $bitacora->save();
-
-            return response()->json(['respuesta' => "atributos actualizados en la entidad con ID: ".$entidad_existente->id]);
+        $entity_already_exists = PossibleEntity::where('name', $name)->first();
+        if ( $entity_already_exists ) {
+            return response()->json(['entidad_registrada' => $entity_already_exists->load('attributes', 'attributes.values')]);
+        } else {
+            $new_entity = new PossibleEntity();
+            $new_entity->name = $name;
+            $new_entity->save();
+            return response()->json(['entidad_registrada' => $new_entity->load('attributes', 'attributes.values')]);
         }
-        return response()->json(['error' => 'Hubo un error']);
+
     }
 
     public function borrarEntidadExistente(Request $request)
     {
-        if ( !empty( $request->input('entidad_id') ) ) {
-            $entidad_existente = Entidade::where('id', $request->input('entidad_id'))->first();
-            $entidad = $entidad_existente;
-            $entidad_existente->delete();
-
-            $bitacora = new Bitacora();
-            $el_usuario =  "el usuario: ".Auth::user()->name." con ID: ".Auth::user()->id;
-            $bitacora->suceso = $el_usuario." borró exitosamente la entidad: ".$entidad;
-            $bitacora->save();
-
-            return response()->json(['entidad_borrada' => $entidad]);
+        if ( !$request->get('entidad_id') ) {
+            return response()->json([
+                'message' => "Por favor envía entidad_id",
+            ], 400);
         }
-        return response()->json(['error' => 'Hubo un error']);
+        $id = $request->get('entidad_id');
+        $entidad_existente = PossibleEntity::where('id', $id)->first();
+        $entidad_existente->delete();
+
+        return response()->json(['message' => "entidad con id $id borrado correctamente."]);
     }
 
     public function updateAtributosDeEntidad(Request $request)
     {
-        if ( !empty( $request->input('entidad_id') ) ) {
-            $entidad_existente = Entidade::where('id', $request->input('entidad_id'))->first();
-            $entidad_existente->atributos = $request->input('atributos');
-            $entidad_existente->update();
-
-            return response()->json(['atributos_actualizados_en_entidad' => $entidad_existente]);
+        if ( !$request->get('entidad_id') || !$request->get('atributos')) {
+            return response()->json(['message' => 'Faltan los atributos ó la entidad_id'], 400);
         }
-        return response()->json(['error' => 'Hubo un error']);
+
+        foreach ($request->get('atributos') as $requested_attribute) {
+            $new_attribute = new PossibleAttribute();
+            $new_attribute->name = $request->get('atributos')['nombre'];
+            $new_attribute->possible_entities_id = $request->get('entidad_id');
+            $new_attribute->save();
+        }
+        return response()->json(['message' => 'Atributos registrados exitosamente']);
+
     }
 
     public function get_entidad(Request $request)

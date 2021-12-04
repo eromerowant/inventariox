@@ -39,9 +39,13 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/entidades-registradas', 'EntidadeController@index')->name('entidadesRegistradas');
 Route::post('/get_entidad', 'EntidadeController@get_entidad')->name('get_entidad');
 Route::post('/registrar-nueva-entidad', 'EntidadeController@storeNewEntidad')->name('storeNewEntidad');
-Route::post('/registrar-nuevo-atributo', 'EntidadeController@storeNewAtributo')->name('storeNewAtributo');
-Route::post('/borrar-entidad-existente', 'EntidadeController@borrarEntidadExistente')->name('borrarEntidadExistente');
+Route::delete('/borrar-entidad-existente', 'EntidadeController@borrarEntidadExistente')->name('borrarEntidadExistente');
 Route::post('/actualizar-atributos-de-entidad', 'EntidadeController@updateAtributosDeEntidad')->name('updateAtributosDeEntidad');
+Route::post('/addNewAttributeInDataBase', 'PossibleAttributeController@addNewAttributeInDataBase')->name('addNewAttributeInDataBase');
+Route::delete('/removeAttributeFromEntity', 'PossibleAttributeController@removeAttributeFromEntity')->name('removeAttributeFromEntity');
+Route::post('/updateAttributeInEntity', 'PossibleAttributeController@updateAttributeInEntity')->name('updateAttributeInEntity');
+Route::post('/addNewValueToPossibleAttribute', 'PossibleAttributeController@addNewValueToPossibleAttribute')->name('addNewValueToPossibleAttribute');
+Route::delete('/removeValueFromAttributeInDatabase', 'PossibleAttributeController@removeValueFromAttributeInDatabase')->name('removeValueFromAttributeInDatabase');
 
 Route::get('/compras-registradas-y-pendientes', 'CompraController@comprasRegistradasYPendientes')->name('comprasRegistradasYPendientes');
 Route::get('/compras-registradas-y-recibidas', 'CompraController@comprasRegistradasYRecibidas')->name('comprasRegistradasYRecibidas');
