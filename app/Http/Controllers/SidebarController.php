@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Compra;
+use App\Purchase;
 use App\Ejemplare;
 use App\Producto;
 use App\Entidade;
+use App\PossibleEntity;
 
 class SidebarController extends Controller
 {
@@ -17,8 +18,8 @@ class SidebarController extends Controller
 
     public function comprasIndex()
     {
-        $compras_en_camino = Compra::where('status', 1)->get(); // Compras en camino
-        $compras_recibidas = Compra::where('status', 2)->get(); // Compras recibidas
+        $compras_en_camino = Purchase::where('status', "Pendiente")->get(); // Compras en camino
+        $compras_recibidas = Purchase::where('status', "Recibida")->get(); // Compras recibidas
 
         return view('sidebar.compras.index', [
             'compras_en_camino' => $compras_en_camino,
@@ -39,21 +40,23 @@ class SidebarController extends Controller
 
     public function comprasCreate()
     {
-        $entidades = Entidade::select('id', 'nombre')->get();
+        $columnas = ['id', 'name'];
+        $relations = ['attributes', 'attributes.values'];
+        $entidades = PossibleEntity::select( $columnas )->with( $relations )->get();
         return view('sidebar.compras.create', ['entidades' => $entidades]);
     }
 
     public function comprasShow($compra_id)
     {
-        $compra = Compra::with('productos', 'ejemplar')->where('id', $compra_id)->first();
+        $compra = Purchase::with('products')->where('id', $compra_id)->first();
 
         return view('sidebar.compras.show', ['compra' => $compra]);
     }
 
     public function ventasIndex()
     {
-        $ventas_pendientes = Compra::where('status', 1)->get(); // ventas pendientes
-        $ventas_culminadas = Compra::where('status', 2)->get(); // ventas culminadas
+        $ventas_pendientes = Purchase::where('status', 1)->get(); // ventas pendientes
+        $ventas_culminadas = Purchase::where('status', 2)->get(); // ventas culminadas
 
         return view('sidebar.ventas.index', [
             'ventas_pendientes' => $ventas_pendientes,

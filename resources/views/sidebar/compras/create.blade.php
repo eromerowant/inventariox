@@ -24,22 +24,22 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label>Selecciona el Producto:</label>
-                                        <select @change="traerLaEntidadDeBaseDeDatos()" v-model="nueva_compra.entidadSeleccionada" class="form-control" required>
+                                        <select @change="traerLaEntidadDeBaseDeDatos()" v-model="NUEVA_COMPRA.entidadSeleccionada" class="form-control" required>
                                             <option value="" disabled selected>-- Seleccione --</option>
                                             @foreach ($entidades as $entidad)
-                                                <option value="{{ $entidad->nombre }}">{{ $entidad->nombre }}</option>
+                                                <option value="{{ $entidad->name }}">{{ $entidad->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" v-for="atributo in atributos" :key="atributo.nombre">
+                            <div class="row" v-for="atributo in ATRIBUTOS" :key="atributo.id">
     
                                 <div class="col">
                                     <div class="form-group">
-                                        <label>@{{ atributo.nombre }}</label>
-                                        <select v-model="nueva_compra.atributos_selected[atributo.nombre]" class="form-control" required>
-                                            <option v-for="valor in atributo.valores" :key="valor" :value="valor">@{{ valor }}</option>
+                                        <label>@{{ atributo.name }}</label>
+                                        <select v-model="NUEVA_COMPRA.atributos_selected[atributo.name]" class="form-control" required>
+                                            <option v-for="valor in atributo.values" :key="valor.id" :value="valor.name">@{{ valor.name }}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -52,13 +52,13 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label>Cantidad de Unidades</label>
-                                        <input v-model="nueva_compra.cantidad_de_unidades" type="number" class="form-control" min="1" step="1" required>
+                                        <input v-model="NUEVA_COMPRA.cantidad_de_unidades" type="number" class="form-control" min="1" step="1" required>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="form-group">
                                         <label>Monto Total Pagado</label>
-                                        <input v-model="nueva_compra.monto_total_pagado" type="number" class="form-control" min="0" step="50" required>
+                                        <input v-model="NUEVA_COMPRA.monto_total_pagado" type="number" class="form-control" min="0" step="50" required>
                                     </div>
                                 </div>
                             </div>
@@ -72,7 +72,7 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label>Precio Sugerido (c/u)</label>
-                                        <input v-model="nueva_compra.precio_sugerido" type="number" class="form-control" required>
+                                        <input v-model="NUEVA_COMPRA.precio_sugerido" type="number" class="form-control" required>
                                     </div>
                                 </div>
                             </div>
@@ -115,26 +115,13 @@
             createApp
         } = Vue;
 
-        let ejemplo_de_entidad = {
-            nombreEntidad: 'Pestaña',
-            atributos: [{
-                    nombre: 'Medida',
-                    valores: ['0.05', '0.07', '0.20']
-                },
-                {
-                    nombre: 'Color',
-                    valores: ['Rojo', 'Negro', 'Transparente']
-                }
-            ],
-        };
-
         const application = createApp({
             el: '#appVue',
             data() {
                 return {
-                    atributos: [],
+                    ATRIBUTOS: [],
 
-                    nueva_compra: {
+                    NUEVA_COMPRA: {
                         entidadSeleccionada: null,
                         cantidad_de_unidades: null,
                         monto_total_pagado: null,
@@ -147,26 +134,25 @@
             },
 
             methods: {
-                traerLaEntidadDeBaseDeDatos(){
-                    if ( !this.nueva_compra.entidadSeleccionada ) {
-                        this.atributos = [];
+                async traerLaEntidadDeBaseDeDatos(){
+                    if ( !this.NUEVA_COMPRA.entidadSeleccionada ) {
+                        this.ATRIBUTOS = [];
                         return;
                     }
                     let obj = {
-                        entidad: this.nueva_compra.entidadSeleccionada
+                        entityName: this.NUEVA_COMPRA.entidadSeleccionada
                     };
-                    axios.post("{{ route('get_entidad') }}", obj)
-                        .then(res => this.atributos = JSON.parse(res.data.atributos))
+                    this.ATRIBUTOS = await axios.post("{{ route('get_entidad') }}", obj).then(res => res.data);
                 },
                 registrarNuevaCompraEnBaseDeDatos: async function(){
                     let nueva_compra = {
-                        ...this.nueva_compra,
+                        ...this.NUEVA_COMPRA,
                         costoPorUnidad: this.monto_unitario,
                     };
                     let ok = await axios.post( "{{route('registrarNuevaCompra')}}", nueva_compra)
                         .then(res => res.data);
                         if ( ok ) {
-                            this.nueva_compra = {
+                            this.NUEVA_COMPRA = {
                                 entidadSeleccionada: null,
                                 cantidad_de_unidades: null,
                                 monto_total_pagado: null,
@@ -179,8 +165,8 @@
             },
             computed: {
                 monto_unitario(){
-                    if ( this.nueva_compra.cantidad_de_unidades && this.nueva_compra.monto_total_pagado ) {
-                        let monto_unitario = this.nueva_compra.monto_total_pagado/this.nueva_compra.cantidad_de_unidades;
+                    if ( this.NUEVA_COMPRA.cantidad_de_unidades && this.NUEVA_COMPRA.monto_total_pagado ) {
+                        let monto_unitario = this.NUEVA_COMPRA.monto_total_pagado/this.NUEVA_COMPRA.cantidad_de_unidades;
                         return monto_unitario; // Recuerda formatear el numero
                     }
                 }

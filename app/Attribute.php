@@ -14,4 +14,9 @@ class Attribute extends Model
     protected $hidden = [
         'pivot', 'deleted_at', 'created_at', 'updated_at'
     ];
+
+    public function products()
+    {
+        return $this->belongsTo('App\Product', 'product_id');
+    }
 }

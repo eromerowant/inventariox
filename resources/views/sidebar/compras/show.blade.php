@@ -4,94 +4,68 @@
 
 @section('content')
 
-   {{-- nueva-compra --}}
-   <div class="container-fluid">
-      <div class="row text-center">
+    {{-- nueva-compra --}}
+    <div class="container-fluid">
+        <div class="row text-center">
             <div class="col">
-               <h3>Compra id: {{ $compra->id }}</h3>
+                <h3>Compra id: {{ $compra->id }}</h3>
+                <p>Fecha: {{ $compra->created_at->format('d-m-Y') }}</p>
+                <p>Monto Pagado: {{ $compra->final_amount }}</p>
+                <p>Cantidad de productos: {{ count($compra->products) }}</p>
             </div>
-      </div>
+        </div>
 
-      <div class="row">
-         <div class="col-md-12">
-            <div class="card">
-               <div class="card-body">
-                  <div class="row">
-                     <div class="col">
-                        <div class="form-group">
-                           <label for="">Nombre del Producto</label>
-                           <input type="text" class="form-control" value="{{ $compra->ejemplar->nombre }}" readonly>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="row">
-                     @foreach ( json_decode($compra->ejemplar->atributos) as $key => $value)
-                        <div class="col">
-                              <div class="form-group">
-                                 <label>{{ $key }}</label>
-                                 <input type="text" class="form-control" value="{{ $value }}" readonly>
-                              </div>
-                        </div>
-                     @endforeach
-                  </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        @foreach ($compra->products as $product)
+                            <div class="row">
+                                <div class="col-12">
+                                    <p>Nombre del Producto: <b>{{ $product->name }}</b> - ID: {{$product->id  }}</p>
+                                </div>
+                                <div class="col-12">
+                                    <p>Costo por unidad: <b>{{ $product->single_cost_when_bought }}</b></p>
+                                </div>
+                                <div class="col-12">
+                                    <p>Precio Sugerido: <b>{{ $product->suggested_price }}</b></p>
+                                </div>
+                                <div class="col-12">
+                                    <p>Ganancia Probable: <b>{{ $product->suggested_profit }}</b></p>
+                                </div>
+                                <div class="col-12">
+                                    <p>Precio en el que fue finalmente vendido: <b>{{ $product->final_sale_price ?? "Aún no ha sido vendido" }}</b></p>
+                                </div>
+                                <div class="col-12">
+                                    <p>Ganancia final después de haber sido vendido: <b>{{ $product->final_profit_on_sale ?? "Aún no ha sido vendido" }}</b></p>
+                                </div>
+                                <div class="col-12">
+                                    @foreach ( $product->attributes as $attr)
+                                        <table class="table-hover" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>N°</th>
+                                                    <th>Atributos</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $attr->name }}- {{ $attr->value }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <hr>
+                        @endforeach
 
-                  <hr class="bg-dark">
-                  <br>
-   
-                  <div class="row">
-                     <div class="col">
-                        <div class="form-group">
-                           <label>Cantidad de Unidades</label>
-                           <input type="text" class="form-control" value="{{ $compra->cantidad }}" readonly>
-                        </div>
-                     </div>
-                     <div class="col">
-                        <div class="form-group">
-                           <label>Monto Total Pagado</label>
-                           <input type="text" class="form-control" value="{{ $compra->precio_total }}" readonly>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="row">
-                     <div class="col">
-                        <div class="form-group">
-                           <label>Monto Unitario (c/u)</label>
-                           <input type="text" class="form-control" value="{{ $compra->productos[0]->costo_unitario }}" readonly>
-                        </div>
-                     </div>
-                     <div class="col">
-                        <div class="form-group">
-                           <label>Precio Sugerido (c/u)</label>
-                           <input type="text" class="form-control"  value="{{ $compra->productos[0]->precio_sugerido }}" readonly>
-                        </div>
-                     </div>
-                  </div>
-
-                  @if ($compra->status == 1)
-                     <div class="row">
-                        <div class="col">
-                           <form action="{{ route('recibir_compra', ['compra_id' => $compra->id]) }}" method="POST">
-                              @csrf
-                              <button class="btn btn-success btn-sm" type="submit">Recibir compra</button>
-                           </form>
-                        </div>
-                     </div>
-                  @else
-                     <div class="row">
-                        <div class="col">
-                           <form action="{{ route('compra_en_camino', ['compra_id' => $compra->id]) }}" method="POST">
-                              @csrf
-                              <button class="btn btn-danger btn-sm" type="submit">Compra en camino</button>
-                           </form>
-                        </div>
-                     </div>
-                  @endif
-
-               </div>
+                    </div>
+                </div>
             </div>
-         </div>
-      </div>
-   </div>
-   {{-- /nueva-compra --}}
+        </div>
+    </div>
+    {{-- /nueva-compra --}}
 
 @stop

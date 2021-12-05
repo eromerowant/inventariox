@@ -10,6 +10,10 @@ use App\Ejemplare;
 use App\Producto;
 use Illuminate\Http\Request;
 
+use App\Product;
+use App\Purchase;
+use App\Attribute;
+
 class CompraController extends Controller
 {
 
@@ -46,57 +50,31 @@ class CompraController extends Controller
 
     public function registrarNuevaCompra(Request $request)
     {
-        // Validaciones
-        // Verificar que el ejemplar ya exista, pra no repetirlo en base de datos.
-        $new_ejemplar = null;
-        $el_ejemplar_ya_existe = false;
-        $ejemplares_existente = Ejemplare::all();
-        foreach ($ejemplares_existente as $ejemplar) {
-            if ($ejemplar->nombre === $request->input('entidadSeleccionada') && $ejemplar->atributos === json_encode($request->input('atributos_selected'))) {
-                $el_ejemplar_ya_existe = true;
-                $new_ejemplar = $ejemplar;
+        $purchase = new Purchase();
+        $purchase->final_amount = $request->get('monto_total_pagado');
+        $purchase->status       = "Pendiente";
+        $purchase->save();
+
+        for ($i = 1; $i <= $request->get('cantidad_de_unidades'); $i++) {
+            $product = new Product();
+            $product->purchase_id             = $purchase->id;
+            $product->name                    = $request->get('entidadSeleccionada');
+            $product->single_cost_when_bought = $request->get('costoPorUnidad');
+            $product->suggested_price         = $request->get('precio_sugerido');
+            $product->suggested_profit        = $request->get('precio_sugerido') - $request->get('costoPorUnidad');
+            $product->status                  = "Pendiente";
+            $product->save();
+
+            foreach ($request->get('atributos_selected') as $attr_name => $attr_value) {
+                $new_attribute = new Attribute();
+                $new_attribute->name       = $attr_name;
+                $new_attribute->value      = $attr_value;
+                $new_attribute->product_id = $product->id;
+                $new_attribute->save();
             }
         }
 
-        // Registrar nuevo ejemplar
-        if (!$el_ejemplar_ya_existe) {
-            $new_ejemplar = new Ejemplare();
-            $new_ejemplar->nombre = $request->input('entidadSeleccionada');
-            $new_ejemplar->atributos = json_encode($request->input('atributos_selected'));
-            $new_ejemplar->cantidad_disponible = 0;
-            $new_ejemplar->save();
-        }
-
-        // Registrar la compra
-        $new_compra = new Compra();
-        $new_compra->cantidad = $request->input('cantidad_de_unidades');
-        $new_compra->precio_total = $request->input('monto_total_pagado');
-        $new_compra->enlace_url = $request->input('enlace_url');
-        $new_compra->ejemplar_id = $new_ejemplar->id;
-        $new_compra->save();
-        // $new_compra->status = 1; // Productos pendientes por recibir
-
-        // Registrar los productos
-        $productos = [];
-        for ($i=1; $i <= $request->input('cantidad_de_unidades'); $i++) { 
-            $new_producto = new Producto();
-            $new_producto->ejemplar_id = $new_ejemplar->id;
-            $new_producto->compra_id = $new_compra->id;
-            $new_producto->costo_unitario = $request->input('costoPorUnidad');
-            $new_producto->precio_sugerido = $request->input('precio_sugerido');
-            $new_producto->status = 1;
-            // $new_producto->qr_code = null;
-            $new_producto->save();
-            $productos[$i] = $new_producto;
-        }
-
-        $response = [
-            'new_ejemplar' => $new_ejemplar,
-            'new_compra' => $new_compra,
-            'productos' => $productos
-        ];
-
-        return response()->json($response);
+        return response()->json( "ok" );
     }
 
     public function eliminarCompraRegistrada(Request $request)
