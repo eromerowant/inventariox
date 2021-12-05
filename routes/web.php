@@ -59,5 +59,9 @@ Route::post('compra_en_camino', 'CompraController@compra_en_camino')->name('comp
 
 
 
+Route::get('entities/index', 'EntityController@index')->name('entities.index');
+
+
+
 
 Route::get('/mostrar-ejemplares', 'EjemplareController@index')->name('VerEjemplares');

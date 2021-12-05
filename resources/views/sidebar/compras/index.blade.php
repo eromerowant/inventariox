@@ -23,6 +23,7 @@
                                                 <th>ID</th>
                                                 <th>Pago Realizado</th>
                                                 <th>Productos</th>
+                                                <th>Atributos</th>
                                                 <th>Fecha</th>
                                                 <th class="no_exportar">Acciones</th>
                                             </tr>
@@ -34,7 +35,10 @@
                                                     <td>{{ $compra->id }}</td>
                                                     <td>{{ $compra->final_amount }}</td>
                                                     <td>{{ count($compra->products) }}</td>
-                                                    <td>{{ $compra->created_at->format('d-m-Y') }}</td>
+                                                    <td>
+                                                      ---
+                                                    </td>
+                                                    <td>{{ $compra->created_at->format('d-m-Y H:i') }}</td>
                                                     <td>
                                                         <a href="{{ route('compras.show', ['compra_id' => $compra->id]) }}">
                                                             <button class="btn btn-outline-info btn-sm">Ver</button>
@@ -65,6 +69,7 @@
                                                 <th>ID</th>
                                                 <th>Pago Realizado</th>
                                                 <th>Productos</th>
+                                                <th>Atributos</th>
                                                 <th>Fecha</th>
                                                 <th class="no_exportar">Acciones</th>
                                             </tr>
@@ -76,6 +81,15 @@
                                                     <td>{{ $compra->id }}</td>
                                                     <td>{{ $compra->final_amount }}</td>
                                                     <td>{{ count($compra->products) }}</td>
+                                                    <td>
+                                                        @if ( count($compra->products) > 0 )
+                                                            @foreach ( $compra->products[0]->attributes as $attr )
+                                                                <span>{{ $attr->name }} - {{ $attr->value }}</span>
+                                                            @endforeach
+                                                        @else
+                                                            <span>Sin Atributos</span>
+                                                        @endif
+                                                    </td>
                                                     <td>{{ $compra->created_at->format('d-m-Y') }}</td>
                                                     <td>
                                                         <a href="{{ route('compras.show', ['compra_id' => $compra->id]) }}">

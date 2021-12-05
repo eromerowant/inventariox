@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 use App\Product;
 use App\Purchase;
 use App\Attribute;
+use App\Entity;
+use App\Value;
+use App\ValueProduct;
 
 class CompraController extends Controller
 {
@@ -50,6 +53,17 @@ class CompraController extends Controller
 
     public function registrarNuevaCompra(Request $request)
     {
+        $entity_registered = Entity::where('name', $request->get('entidadSeleccionada'))->first();
+        if ( $entity_registered ) {
+            $entity = $entity_registered;
+        } else {
+            $entity = new Entity();
+            $entity->name = $request->get('entidadSeleccionada');
+            $entity->save();
+        }
+
+
+
         $purchase = new Purchase();
         $purchase->final_amount = $request->get('monto_total_pagado');
         $purchase->status       = "Pendiente";
@@ -57,8 +71,8 @@ class CompraController extends Controller
 
         for ($i = 1; $i <= $request->get('cantidad_de_unidades'); $i++) {
             $product = new Product();
+            $product->entity_id               = $entity->id;
             $product->purchase_id             = $purchase->id;
-            $product->name                    = $request->get('entidadSeleccionada');
             $product->single_cost_when_bought = $request->get('costoPorUnidad');
             $product->suggested_price         = $request->get('precio_sugerido');
             $product->suggested_profit        = $request->get('precio_sugerido') - $request->get('costoPorUnidad');
@@ -66,11 +80,32 @@ class CompraController extends Controller
             $product->save();
 
             foreach ($request->get('atributos_selected') as $attr_name => $attr_value) {
-                $new_attribute = new Attribute();
-                $new_attribute->name       = $attr_name;
-                $new_attribute->value      = $attr_value;
-                $new_attribute->product_id = $product->id;
-                $new_attribute->save();
+                $atributo_existente = Attribute::where('name', $attr_name)->first();
+    
+                if ( $atributo_existente ) {
+                    $new_attribute = $atributo_existente;
+                } else {
+                    $new_attribute        = new Attribute();
+                    $new_attribute->name  = $attr_name;
+                    $new_attribute->save();
+                    $entity->attributes()->attach( $new_attribute->id );
+                }
+    
+                $value_existente = Value::where('name', $attr_value)->first();
+                if ( $value_existente ) {
+                    $new_value = $value_existente;
+                } else {
+                    $new_value        = new Value();
+                    $new_value->name  = $attr_name;
+                    $new_value->save();
+                    $new_attribute->values()->attach( $new_value->id );
+                }
+
+                $value_product = new ValueProduct();
+                $value_product->value_id     = $new_value->id;
+                $value_product->attribute_id = $new_attribute->id;
+                $value_product->product_id   = $product->id;
+                $value_product->save();
             }
         }
 
@@ -161,21 +196,15 @@ class CompraController extends Controller
         return response()->json(['error' => 'hubo un error']);
     }
 
-    public function recibir_compra(Request $request)
+    public function recibir_compra( Request $request )
     {
-        $compra = Compra::where('id', $request->get('compra_id'))->first();
-        $compra->status = 2; // recibida
+        $compra = Purchase::where('id', $request->get('compra_id'))->first();
+        $compra->status = "Recibida";
         $compra->update();
 
-        // Actualizamos el inventario
-        $ejemplar = Ejemplare::where('id', $compra->ejemplar_id)->first();
-        $ejemplar->cantidad_disponible =  $ejemplar->cantidad_disponible + $compra->cantidad;
-        $ejemplar->update();
-
-        // Productos en estado disponible
-        foreach ($compra->productos as $producto) {
-            $producto->status = 2; // Disponibles
-            $producto->update();
+        foreach ($compra->products as $product) {
+            $product->status = "Disponible";
+            $product->update();
         }
 
         return redirect()->action([SidebarController::class, 'comprasIndex']);
@@ -183,19 +212,13 @@ class CompraController extends Controller
 
     public function compra_en_camino(Request $request)
     {
-        $compra = Compra::where('id', $request->get('compra_id'))->first();
-        $compra->status = 1; // en camino
+        $compra = Purchase::where('id', $request->get('compra_id'))->first();
+        $compra->status = "Pendiente";
         $compra->update();
 
-        // Actualizamos el inventario
-        $ejemplar = Ejemplare::where('id', $compra->ejemplar_id)->first();
-        $ejemplar->cantidad_disponible =  $ejemplar->cantidad_disponible - $compra->cantidad;
-        $ejemplar->update();
-
-        // Productos en estado disponible
-        foreach ($compra->productos as $producto) {
-            $producto->status = 1; // En camino
-            $producto->update();
+        foreach ($compra->products as $product) {
+            $product->status = "Pendiente";
+            $product->update();
         }
 
         return redirect()->action([SidebarController::class, 'comprasIndex']);

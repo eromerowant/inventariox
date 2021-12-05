@@ -25,8 +25,13 @@ class Product extends Model
         return $this->belongsTo('App\Sale', 'sale_id');
     }
 
-    public function attributes()
+    public function entity()
     {
-        return $this->hasMany('App\Attribute', 'product_id');
+        return $this->belongsTo('App\Entity', 'entity_id');
+    }
+
+    public function values()
+    {
+        return $this->hasMany('App\ValueProduct', 'product_id');
     }
 }

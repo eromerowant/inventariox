@@ -10,13 +10,15 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
             $table->float('single_cost_when_bought', 9, 2);
             $table->float('suggested_price', 9, 2);
             $table->float('suggested_profit', 9, 2);
             $table->float('final_sale_price', 9, 2)->nullable();
             $table->float('final_profit_on_sale', 9, 2)->nullable();
             $table->string('status');
+
+            $table->unsignedBigInteger('entity_id')->nullable();
+            $table->foreign('entity_id')->references('id')->on('entities')->onDelete('set null');
 
             $table->unsignedBigInteger('purchase_id')->nullable();
             $table->foreign('purchase_id')->references('id')->on('purchases')->onDelete('set null');

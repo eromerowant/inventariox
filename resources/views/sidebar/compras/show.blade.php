@@ -12,57 +12,51 @@
                 <p>Fecha: {{ $compra->created_at->format('d-m-Y') }}</p>
                 <p>Monto Pagado: {{ $compra->final_amount }}</p>
                 <p>Cantidad de productos: {{ count($compra->products) }}</p>
+                @if ( $compra->status === "Pendiente" )
+                    <form action="{{ route('recibir_compra', ['compra_id' => $compra->id]) }}" method="POST">
+                        @csrf
+                        <input type="submit" value="Paquete recibido" class="btn btn-sm btn-success">
+                    </form>
+                @else
+                <form action="{{ route('compra_en_camino', ['compra_id' => $compra->id]) }}" method="POST">
+                    @csrf
+                    <input type="submit" value="Me equivoqué, no la he recibido aún." class="btn btn-sm btn-success">
+                </form>                    
+                @endif
             </div>
         </div>
 
-        <div class="row">
+        <div class="row mt-3">
             <div class="col-md-12">
+                @foreach ($compra->products as $product)
                 <div class="card">
                     <div class="card-body">
-                        @foreach ($compra->products as $product)
-                            <div class="row">
-                                <div class="col-12">
-                                    <p>Nombre del Producto: <b>{{ $product->name }}</b> - ID: {{$product->id  }}</p>
-                                </div>
-                                <div class="col-12">
-                                    <p>Costo por unidad: <b>{{ $product->single_cost_when_bought }}</b></p>
-                                </div>
-                                <div class="col-12">
-                                    <p>Precio Sugerido: <b>{{ $product->suggested_price }}</b></p>
-                                </div>
-                                <div class="col-12">
-                                    <p>Ganancia Probable: <b>{{ $product->suggested_profit }}</b></p>
-                                </div>
-                                <div class="col-12">
-                                    <p>Precio en el que fue finalmente vendido: <b>{{ $product->final_sale_price ?? "Aún no ha sido vendido" }}</b></p>
-                                </div>
-                                <div class="col-12">
-                                    <p>Ganancia final después de haber sido vendido: <b>{{ $product->final_profit_on_sale ?? "Aún no ha sido vendido" }}</b></p>
-                                </div>
-                                <div class="col-12">
-                                    @foreach ( $product->attributes as $attr)
-                                        <table class="table-hover" style="width:100%">
-                                            <thead>
-                                                <tr>
-                                                    <th>N°</th>
-                                                    <th>Atributos</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $attr->name }}- {{ $attr->value }}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    @endforeach
-                                </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <p>Nombre del Producto: <b>{{ $product->entity->name }}</b> - ID: {{$product->id  }}</p>
                             </div>
-                            <hr>
-                        @endforeach
-
+                            <div class="col-12">
+                                <p>Costo por unidad: <b>{{ $product->single_cost_when_bought }}</b></p>
+                            </div>
+                            <div class="col-12">
+                                <p>Precio Sugerido: <b>{{ $product->suggested_price }}</b></p>
+                            </div>
+                            <div class="col-12">
+                                <p>Ganancia Probable: <b>{{ $product->suggested_profit }}</b></p>
+                            </div>
+                            <div class="col-12">
+                                <p>Precio en el que fue finalmente vendido: <b>{{ $product->final_sale_price ?? "Aún no ha sido vendido" }}</b></p>
+                            </div>
+                            <div class="col-12">
+                                <p>Ganancia final después de haber sido vendido: <b>{{ $product->final_profit_on_sale ?? "Aún no ha sido vendido" }}</b></p>
+                            </div>
+                            <div class="col-12">
+                               
+                            </div>
+                        </div>
                     </div>
                 </div>
+                @endforeach
             </div>
         </div>
     </div>

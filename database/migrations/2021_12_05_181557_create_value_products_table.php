@@ -4,13 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAttributesTable extends Migration
+class CreateValueProductsTable extends Migration
 {
     public function up()
     {
-        Schema::create('attributes', function (Blueprint $table) {
+        Schema::create('value_products', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
+
+            $table->unsignedBigInteger('value_id')->nullable();
+            $table->foreign('value_id')->references('id')->on('values')->onDelete('set null');
+
+            $table->unsignedBigInteger('attribute_id')->nullable();
+            $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('set null');
 
             $table->unsignedBigInteger('product_id')->nullable();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('set null');
@@ -22,6 +27,6 @@ class CreateAttributesTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('attributes');
+        Schema::dropIfExists('value_products');
     }
 }

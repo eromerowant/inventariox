@@ -4,16 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAttributesTable extends Migration
+class CreateEntitiesTable extends Migration
 {
     public function up()
     {
-        Schema::create('attributes', function (Blueprint $table) {
+        Schema::create('entities', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-
-            $table->unsignedBigInteger('product_id')->nullable();
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('set null');
 
             $table->softDeletes();
             $table->timestamps();
@@ -22,6 +19,6 @@ class CreateAttributesTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('attributes');
+        Schema::dropIfExists('entities');
     }
 }

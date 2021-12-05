@@ -9,6 +9,9 @@ use App\Producto;
 use App\Entidade;
 use App\PossibleEntity;
 
+use App\Product;
+use App\Entity;
+
 class SidebarController extends Controller
 {
     public function configuracion()
@@ -29,12 +32,12 @@ class SidebarController extends Controller
 
     public function inventarioIndex()
     {
-        // $productos_en_camino = Producto::where('status', 1)->get(); // productos en camino
-        // $productos_recibidos = Producto::where('status', 2)->get(); // productos recibidas
-        $ejemplares = Ejemplare::all();
+
+        // $productos_disponibles = Product::where('status', "Disponible")->get();
+        $entities = Entity::all();
 
         return view('sidebar.inventario.index', [
-            'ejemplares' => $ejemplares
+            'entities' => $entities,
         ]);
     }
 

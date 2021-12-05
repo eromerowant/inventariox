@@ -22,25 +22,21 @@
                                              <th>N°</th>
                                              <th>Id</th>
                                              <th>Nombre</th>
-                                             <th>Caracteristicas</th>
-                                             <th>Cantidad Disponible</th>
+                                             <th>Cantidad de Productos</th>
                                              <th class="no_exportar">Acciones</th>
                                           </tr>
                                        </thead>
                                        <tbody>
-                                          @foreach ($ejemplares as $ejemplar)
+                                          @foreach ($entities as $entity)
                                              <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $ejemplar->id }}</td>
-                                                <td>{{ $ejemplar->nombre }}</td>
+                                                <td>{{ $entity->id }}</td>
+                                                <td>{{ $entity->name }}</td>
+                                                <td>{{ count($entity->products) }}</td>
                                                 <td>
-                                                    @foreach (json_decode($ejemplar->atributos) as $item => $value)
-                                                        {{ $item .': '. $value.", " }}
-                                                    @endforeach
-                                                </td>
-                                                <td>{{ $ejemplar->cantidad_disponible }}</td>
-                                                <td>
-                                                   <button type="button" class="btn btn-info btn-sm">Botón</button>
+                                                    <a href="{{ route('entities.index', ['entity_id' => $entity->id]) }}" class="btn btn-info btn-sm">
+                                                        Ver
+                                                    </a>
                                                 </td>
                                              </tr>
                                           @endforeach
@@ -70,7 +66,7 @@
                 buttons: [
                     {
                         extend: 'excelHtml5',
-                        title: "Compras en camino - "+new Date().toLocaleString(),
+                        title: "Productos disponibles - "+new Date().toLocaleString(),
                         className: "bg-info",
                         exportOptions: {
                             columns: ':not(.no_exportar)'
