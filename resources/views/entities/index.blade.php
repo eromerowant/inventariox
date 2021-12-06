@@ -45,7 +45,8 @@
                                             <div class="row" v-for="(producto, index) in FILTERED_PRODUCTS" :key="producto.id">
                                                 <div class="col-12">
                                                     <p>
-                                                        <span v-for="valor in producto.values">@{{ index+1 }} - @{{ valor.attribute.name }}: <b>@{{ valor.name }}</b></span>
+                                                        @{{ index+1 }}
+                                                        <span v-for="valor in producto.values">@{{ valor.attribute.name }}: <b>@{{ valor.name+" " }}</b></span>
                                                         (Compra: @{{ producto.purchase.created_at }})
                                                     </p>
                                                     <hr class="hr">
