@@ -60,6 +60,7 @@ Route::post('compra_en_camino', 'CompraController@compra_en_camino')->name('comp
 
 
 Route::get('entities/index', 'EntityController@index')->name('entities.index');
+Route::post('entities/get_available_products_by_entity_name', 'EntityController@get_available_products_by_entity_name')->name('entities.get_available_products_by_entity_name');
 
 
 

@@ -69,6 +69,12 @@ class SidebarController extends Controller
 
     public function ventasCreate()
     {
-        return view('sidebar.ventas.create');
+        $entities = Entity::whereHas('products', function($q){
+            $q->where('status', 'Disponible');
+        })->get();
+
+        return view('sidebar.ventas.create', [
+            'entities' => $entities,
+        ]);
     }
 }
