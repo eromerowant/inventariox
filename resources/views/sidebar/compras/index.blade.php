@@ -22,25 +22,25 @@
                                                 <th>N°</th>
                                                 <th>ID</th>
                                                 <th>Pago Realizado</th>
-                                                <th>Productos</th>
-                                                <th>Atributos</th>
+                                                <th>Cantidad de Productos</th>
+                                                <th>Producto</th>
                                                 <th>Fecha</th>
                                                 <th class="no_exportar">Acciones</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($compras_en_camino as $compra)
+                                            @foreach ($compras_en_camino as $purchase)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $compra->id }}</td>
-                                                    <td>{{ $compra->final_amount }}</td>
-                                                    <td>{{ count($compra->products) }}</td>
+                                                    <td>{{ $purchase->id }}</td>
+                                                    <td>{{ $purchase->final_amount }}</td>
+                                                    <td>{{ count($purchase->products) }}</td>
                                                     <td>
-                                                      ---
+                                                        {{ $purchase->products[0]->entity->name }}
                                                     </td>
-                                                    <td>{{ $compra->created_at->format('d-m-Y H:i') }}</td>
+                                                    <td>{{ $purchase->created_at->format('d-m-Y H:i') }}</td>
                                                     <td>
-                                                        <a href="{{ route('compras.show', ['compra_id' => $compra->id]) }}">
+                                                        <a href="{{ route('compras.show', ['compra_id' => $purchase->id]) }}">
                                                             <button class="btn btn-outline-info btn-sm">Ver</button>
                                                         </a>
                                                     </td>
@@ -68,31 +68,25 @@
                                                 <th>N°</th>
                                                 <th>ID</th>
                                                 <th>Pago Realizado</th>
-                                                <th>Productos</th>
-                                                <th>Atributos</th>
+                                                <th>Cantidad de Productos</th>
+                                                <th>Producto</th>
                                                 <th>Fecha</th>
                                                 <th class="no_exportar">Acciones</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($compras_recibidas as $compra)
+                                            @foreach ($compras_recibidas as $purchase)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $compra->id }}</td>
-                                                    <td>{{ $compra->final_amount }}</td>
-                                                    <td>{{ count($compra->products) }}</td>
+                                                    <td>{{ $purchase->id }}</td>
+                                                    <td>{{ $purchase->final_amount }}</td>
+                                                    <td>{{ count($purchase->products) }}</td>
                                                     <td>
-                                                        @if ( count($compra->products) > 0 )
-                                                            @foreach ( $compra->products[0]->attributes as $attr )
-                                                                <span>{{ $attr->name }} - {{ $attr->value }}</span>
-                                                            @endforeach
-                                                        @else
-                                                            <span>Sin Atributos</span>
-                                                        @endif
+                                                        {{ $purchase->products[0]->entity->name }}
                                                     </td>
-                                                    <td>{{ $compra->created_at->format('d-m-Y') }}</td>
+                                                    <td>{{ $purchase->created_at->format('d-m-Y H:i') }}</td>
                                                     <td>
-                                                        <a href="{{ route('compras.show', ['compra_id' => $compra->id]) }}">
+                                                        <a href="{{ route('compras.show', ['compra_id' => $purchase->id]) }}">
                                                             <button class="btn btn-outline-info btn-sm">Ver</button>
                                                         </a>
                                                     </td>

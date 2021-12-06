@@ -34,7 +34,7 @@ class SidebarController extends Controller
     {
 
         // $productos_disponibles = Product::where('status', "Disponible")->get();
-        $entities = Entity::all();
+        $entities = Entity::with('products')->get();
 
         return view('sidebar.inventario.index', [
             'entities' => $entities,

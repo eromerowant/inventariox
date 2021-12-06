@@ -15,8 +15,13 @@ class Value extends Model
         'pivot', 'deleted_at', 'created_at', 'updated_at'
     ];
 
-    public function attributes()
+    public function products()
     {
-        return $this->belongsToMany(Attribute::class, 'attribute_values', 'value_id', 'attribute_id');
+        return $this->belongsToMany(Product::class, 'value_products', 'value_id', 'product_id');
+    }
+
+    public function attribute()
+    {
+        return $this->belongsTo('App\Attribute', 'attribute_id');
     }
 }

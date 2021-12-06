@@ -14,9 +14,6 @@ class CreateValueProductsTable extends Migration
             $table->unsignedBigInteger('value_id')->nullable();
             $table->foreign('value_id')->references('id')->on('values')->onDelete('set null');
 
-            $table->unsignedBigInteger('attribute_id')->nullable();
-            $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('set null');
-
             $table->unsignedBigInteger('product_id')->nullable();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('set null');
 

@@ -88,24 +88,21 @@ class CompraController extends Controller
                     $new_attribute        = new Attribute();
                     $new_attribute->name  = $attr_name;
                     $new_attribute->save();
-                    $entity->attributes()->attach( $new_attribute->id );
+                    $new_attribute->entities()->attach( $entity->id );
                 }
     
-                $value_existente = Value::where('name', $attr_value)->first();
+                $value_existente = Value::where('name', $attr_value)->where('attribute_id', $new_attribute->id)->first();
                 if ( $value_existente ) {
                     $new_value = $value_existente;
                 } else {
-                    $new_value        = new Value();
-                    $new_value->name  = $attr_name;
+                    $new_value                = new Value();
+                    $new_value->name          = $attr_value;
+                    $new_value->attribute_id  = $new_attribute->id;
                     $new_value->save();
-                    $new_attribute->values()->attach( $new_value->id );
                 }
 
-                $value_product = new ValueProduct();
-                $value_product->value_id     = $new_value->id;
-                $value_product->attribute_id = $new_attribute->id;
-                $value_product->product_id   = $product->id;
-                $value_product->save();
+                $product->values()->attach( $new_value->id );
+
             }
         }
 

@@ -27,6 +27,7 @@
                                           </tr>
                                        </thead>
                                        <tbody>
+                                           
                                           @foreach ($entities as $entity)
                                              <tr>
                                                 <td>{{ $loop->iteration }}</td>

@@ -12,6 +12,9 @@ class CreateValuesTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
 
+            $table->unsignedBigInteger('attribute_id')->nullable();
+            $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('set null');
+
             $table->softDeletes();
             $table->timestamps();
         });

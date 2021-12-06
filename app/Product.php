@@ -32,6 +32,6 @@ class Product extends Model
 
     public function values()
     {
-        return $this->hasMany('App\ValueProduct', 'product_id');
+        return $this->belongsToMany(Value::class, 'value_products', 'product_id', 'value_id');
     }
 }

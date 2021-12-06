@@ -12,7 +12,11 @@ class Purchase extends Model
     protected $dates = ['deleted_at'];
 
     protected $hidden = [
-        'pivot', 'deleted_at', 'created_at', 'updated_at'
+        'pivot', 'deleted_at', 'updated_at'
+    ];
+
+    protected $casts = [
+        'created_at'  => 'date:d-m-Y H:i',
     ];
 
     public function products()
