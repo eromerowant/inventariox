@@ -295,7 +295,7 @@
                 //   callback(args);
                 // }, 3000),
 
-                async getEntitiesFromDataBase() {
+                async getPossibleEntitiesFromDataBase() {
                     this.ENTITIES_IN_DATABASE = await axios.get("{{ route('entidadesRegistradas') }}")
                         .then(res => res.data.entidades_registradas)
                         .catch(err => {console.error(err)});
@@ -304,7 +304,7 @@
             }, // end methods
 
             mounted: async function() {
-                await this.getEntitiesFromDataBase();
+                await this.getPossibleEntitiesFromDataBase();
             },
 
         })
