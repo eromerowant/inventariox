@@ -8,6 +8,6 @@ class PossibleAttributeSeeder extends Seeder
 {
     public function run()
     {
-        factory(PossibleAttribute::class, 20)->create();
+        // factory(PossibleAttribute::class, 20)->create();
     }
 }

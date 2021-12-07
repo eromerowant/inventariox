@@ -8,6 +8,6 @@ class PossibleValueSeeder extends Seeder
 {
     public function run()
     {
-        factory(PossibleValue::class, 20)->create();
+        // factory(PossibleValue::class, 20)->create();
     }
 }
