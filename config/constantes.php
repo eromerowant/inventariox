@@ -17,7 +17,7 @@ return [
             '1 unidad',
          ],
       ],
-      'Cabeza de preactica' => [
+      'Cabeza de práctica' => [
          'Presentación' => [
             '1 unidad',
          ],
