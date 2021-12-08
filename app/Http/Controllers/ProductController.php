@@ -7,79 +7,34 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function get_filtered_available_products( Request $request )
     {
-        //
-    }
+        $relations = ['values', 'entity', 'values.attribute'];
+        $peticion = Product::where('status', 'Disponible')
+                            ->has('values')
+                            ->with( $relations );
+        // Entidad
+        $entity_selected = $request->get('entity_selected');
+        $peticion->whereHas('entity', function($q) use ($entity_selected){
+            $q->where('name', $entity_selected);
+        });
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+        // Atributos
+        foreach ($request->get('combination') as $query_value) {
+            $peticion->whereHas('values', function($q) use ($query_value){
+                $q->where('name', $query_value);
+            });
+        }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        // Productos en cesta
+        $product_ids = $request->get('product_ids');
+        foreach ($product_ids as $product_id) {
+            if ( $product_id ) {
+                $peticion->where('id', '!=' , $product_id);
+            }
+        }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Product $product)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Product $product)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Product $product)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Product $product)
-    {
-        //
+        $products = $peticion->get();
+        return response()->json( $products );
     }
 }

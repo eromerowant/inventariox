@@ -66,3 +66,4 @@ Route::get('entities/get_entities', 'EntityController@get_entities')->name('enti
 
 
 Route::get('/mostrar-ejemplares', 'EjemplareController@index')->name('VerEjemplares');
+Route::post('products/get_filtered_available_products', 'ProductController@get_filtered_available_products')->name('products.get_filtered_available_products');

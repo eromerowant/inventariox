@@ -71,7 +71,7 @@ return [
       ],
       'Máscara Selladora' => [
          'Marca' => [
-            'Fumix',
+            'Funmix',
          ],
          'Presentación' => [
             '10ml',
@@ -95,7 +95,7 @@ return [
             '1 unidad',
          ],
       ],
-      'Pañito sin pelusa' => [
+      'Pañitos sin pelusa' => [
          'Modelo' => [
             'Caja Acrílica', 
             'Formato Económico',
@@ -114,7 +114,7 @@ return [
             '50 unidades',
          ],
       ],
-      'Pegamento' => [
+      'Pegamentos' => [
          'Marca' => [
             'Sky',
             'Lady Black',
@@ -208,17 +208,21 @@ return [
          ],
       ],
 
-      'Pinza' => [
+      'Pinzas' => [
          'Marca' => [
             'Vetus',
-            'Vetus Volumen Ruso',
             'No Aplica',
          ],
          'Forma' => [
             'Recta',
             'Curva',
             'CS-11',
-            '6S-SA',
+            '6S-SA Volumen Ruso',
+            'No Aplica',
+         ],
+         'Color' => [
+            'Pink',
+            'Plomo',
             'No Aplica',
          ],
       ],

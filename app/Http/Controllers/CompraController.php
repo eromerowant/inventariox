@@ -84,6 +84,9 @@ class CompraController extends Controller
     
                 if ( $atributo_existente ) {
                     $new_attribute = $atributo_existente;
+                    if ( !$new_attribute->entities->contains( $entity->id ) ) {
+                        $new_attribute->entities()->attach( $entity->id );
+                    }
                 } else {
                     $new_attribute        = new Attribute();
                     $new_attribute->name  = $attr_name;
