@@ -257,7 +257,8 @@
                     
                     let entity = document.getElementById('entity').value;
                     let products = this.FILTERED_AVAILABLE_PRODUCTS.splice(0, selected_quantity);
-                    this.agregar_a_la_cesta( products, entity );
+                    await this.agregar_a_la_cesta( products, entity );
+                    document.getElementById('cantidad_de_productos').value = null;
                 },
 
                 async agregar_a_la_cesta( productos, nombre_entidad ){
