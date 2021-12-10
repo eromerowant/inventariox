@@ -123,11 +123,17 @@
                                                                 </div>
                                                             </div>
                                                             <div class="row">
-                                                                <div class="col-6">
+                                                                <div class="col-12">
                                                                     <p>Cantidad de productos: <strong>@{{ combination.products.length }}</strong></p>
+                                                                    <p v-for="(product, indice) in combination.products" :title="`id: ${product.id}`">
+                                                                        @{{ indice+1 }}) 
+                                                                        Costo Unitario: @{{ product.single_cost_when_bought }}, 
+                                                                        Precio Sugerido: @{{ product.suggested_price }}
+                                                                    </p>
+                                                                    <hr>
+                                                                    <p>Total Unitario: @{{ combination.products }}</p>
                                                                 </div>
                                                             </div>
-
                                                         </div>
                                                     </div>
                                                 </div>
