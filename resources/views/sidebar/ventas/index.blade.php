@@ -20,7 +20,6 @@
                                     <table id="tabla_de_ventas_finalizadas" class="table-hover" style="width:100%">
                                         <thead>
                                             <tr>
-                                                <th>N°</th>
                                                 <th>ID</th>
                                                 <th>Productos</th>
                                                 <th>Precio Venta</th>
@@ -50,6 +49,28 @@
         $(document).ready(function() {
 
             $('#tabla_de_ventas_finalizadas').DataTable({
+                serverSide: true,
+                processing: true,
+                ajax: {
+                    url: "{{ route('ajax.get_finished_sales') }}"
+                },
+                columns: [
+                    { data: "id", name: 'id'},
+                    { data: "productos", name: 'productos'},
+                    { data: "final_amount", name: 'final_amount'},
+                    { data: "final_cost", name: 'final_cost'},
+                    { data: "final_profit", name: 'final_profit'},
+                    { data: "fecha", name: 'fecha'},
+                    { data: 'action', orderable: false, searchable:     false, },
+
+                    // { data: "talleres"},
+                    // { data: "icon", orderable: false, searchable: false,
+                    //     render: function (data, type, row){
+                    //         return `<img width="50" class="img-fluid" src="${data}" alt="Icono de la destreza">`;
+                    //     },
+                    // },
+                    
+                ],
                 language: {
                     url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
                 },
