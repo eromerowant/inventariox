@@ -101,25 +101,33 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12">
-                                    <h2 class="h5">Cesta</h2>
+                                    <h2 class="h4"><strong>Cesta</strong></h2>
+                                    <p>Costo Cesta Total: <strong>@{{ TOTAL_UNITARIO_CESTA }}</strong></p>
+                                    <p>Precio Cesta Total Sugerido: <strong>@{{ TOTAL_SUGERIDO_CESTA }}</strong></p>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-12">
                                     <div class="card" v-for="(entity, index) in CESTA" :key="entity.entity_name">
                                         <div class="card-body" v-if="index != 0">
-                                            <div class="row">
-                                                <div class="col-12">
+                                            <div class="row mb-3">
+                                                <div class="col-6">
                                                     <p class="h6"><strong>@{{ entity.entity_name }}</strong></p>
+                                                </div>
+                                                <div class="col-6 text-right">
+                                                    <button @click="eliminar_entidad_de_la_cesta(index)" type="button" class="btn btn-danger btn-sm"><i class="fas fa-times-circle"></i></button>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-12">
-                                                    <div class="card" v-for="combination in entity.combinations">
+                                                    <div class="card" v-for="(combination, pos_combination) in entity.combinations">
                                                         <div class="card-body">
-                                                            <div class="row">
-                                                                <div class="col-12">
+                                                            <div class="row mb-2">
+                                                                <div class="col-6">
                                                                     <span><strong>@{{ combination.name+", " }}</strong></span>
+                                                                </div>
+                                                                <div class="col-6 text-right">
+                                                                    <button @click="eliminar_combinacion_de_la_cesta(pos_combination)" type="button" class="btn btn-danger btn-sm"><i class="fas fa-times-circle"></i></button>
                                                                 </div>
                                                             </div>
                                                             <div class="row">
@@ -127,12 +135,35 @@
                                                                     <p>Cantidad de productos: <strong>@{{ combination.products.length }}</strong></p>
                                                                     <p v-for="(product, indice) in combination.products" :title="`id: ${product.id}`">
                                                                         @{{ indice+1 }}) 
-                                                                        Costo Unitario: @{{ product.single_cost_when_bought }}, 
-                                                                        Precio Sugerido: @{{ product.suggested_price }}
+                                                                        Costo Unitario: <strong>@{{ product.single_cost_when_bought }}</strong>, 
+                                                                        Precio Sugerido: <strong>@{{ product.suggested_price }}</strong>
                                                                     </p>
-                                                                    <hr>
-                                                                    <p>Total Unitario: @{{ combination.products }}</p>
                                                                 </div>
+                                                            </div>
+                                                            <hr>
+                                                            <div class="row">
+                                                                <div class="col-3 text-center">
+                                                                    <p>Total Unitario: <strong>@{{ combination.total_unitario }}</strong> </p>
+                                                                </div>
+                                                                <div class="col-3 text-center">
+                                                                    <p>Total Sugerido: <strong>@{{ combination.total_sugerido }}</strong> </p>
+                                                                </div>
+                                                                <template v-if="combination.precio_final">
+                                                                    <div class="col-3 text-center">
+                                                                        <span class="bg-success p-1 rounded">PRECIO FINAL: <strong>@{{ combination.precio_final }}</strong></span>
+                                                                    </div>
+                                                                    <div class="col-3">
+                                                                        <button @click="quitar_precio_de_venta_a_la_combinacion(index, pos_combination)" type="button" class="btn btn-danger">Cambiar Precio</button>
+                                                                    </div>
+                                                                </template>
+                                                                <template v-else>
+                                                                    <div class="col-3 text-center">
+                                                                        <input type="text" :id="`entity_${index}_combination_${pos_combination}`" class="form-control" placeholder="Precio Final...">
+                                                                    </div>
+                                                                    <div class="col-3">
+                                                                        <button @click="agregar_precio_de_venta_a_la_combinacion(`entity_${index}_combination_${pos_combination}`, index, pos_combination)" type="button" class="btn btn-success"><i class="fas fa-plus-circle"></i></button>
+                                                                    </div>
+                                                                </template>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -141,6 +172,11 @@
 
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="row" v-if="CESTA.length > 1">
+                                <div class="col-12 text-right">
+                                    <button @click="registrar_compra_en_db" class="btn btn-success" type="button">REGISTRAR COMPRA <i class="fas fa-check"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -277,6 +313,8 @@
                                 {
                                     name: [...this.SELECTED_COMBINATION].sort(),
                                     products: [...productos],
+                                    total_unitario: [...productos].reduce( (prev, next) => ({single_cost_when_bought: prev.single_cost_when_bought + next.single_cost_when_bought }) ).single_cost_when_bought,
+                                    total_sugerido: [...productos].reduce( (prev, next) => ({suggested_price: prev.suggested_price + next.suggested_price }) ).suggested_price,
                                 }
                             ]
                         }
@@ -296,7 +334,10 @@
                                 entity.combinations = entity.combinations.map(com => {
                                     if ( JSON.stringify(com.name.sort()) == JSON.stringify([...this.SELECTED_COMBINATION].sort()) ) {
                                         console.log( 'se agregan los productos en la combinacion ', com.name );
-                                        com.products = [...com.products, ...productos]
+                                        com.products = [...com.products, ...productos];
+                                        com.total_unitario = com.products.reduce( (prev, next) => ({single_cost_when_bought: prev.single_cost_when_bought + next.single_cost_when_bought }) ).single_cost_when_bought;
+                                        com.total_sugerido = com.products.reduce( (prev, next) => ({suggested_price: prev.suggested_price + next.suggested_price }) ).suggested_price;
+                                        
                                     }
                                     return com;
                                 })
@@ -308,6 +349,8 @@
                                     {
                                         name: [...this.SELECTED_COMBINATION].sort(),
                                         products: [...productos],
+                                        total_unitario: [...productos].reduce( (prev, next) => ({single_cost_when_bought: prev.single_cost_when_bought + next.single_cost_when_bought }) ).single_cost_when_bought,
+                                        total_sugerido: [...productos].reduce( (prev, next) => ({suggested_price: prev.suggested_price + next.suggested_price }) ).suggested_price,
                                     }
                                 ]
                             }
@@ -316,6 +359,44 @@
                            
                         })
                     }
+                },
+                agregar_precio_de_venta_a_la_combinacion( div, firstIndex, secondIndex ){
+                    let precio = document.getElementById(div).value;
+                    if ( !precio ) {return;}
+                    this.CESTA[firstIndex].combinations[secondIndex] = {...this.CESTA[firstIndex].combinations[secondIndex], precio_final: parseInt(precio)};
+                },
+                quitar_precio_de_venta_a_la_combinacion( firstIndex, secondIndex ){
+                    this.CESTA[firstIndex].combinations[secondIndex] = {...this.CESTA[firstIndex].combinations[secondIndex], precio_final: null};
+                },
+                eliminar_entidad_de_la_cesta(indice){
+                    this.CESTA = this.CESTA.filter((entity, index) => index !== indice);
+                },
+                eliminar_combinacion_de_la_cesta(indice){
+                    this.CESTA = this.CESTA.map(entity => {
+                        if ( entity.hasOwnProperty('combinations') ) {
+                            entity.combinations = entity.combinations.filter((combination, position) => position !== indice);
+                        }
+                        return entity;
+                    });
+                },
+                registrar_compra_en_db(){
+                    let is_ok=true;
+                    this.CESTA.map(entity => {
+                        if ( entity.hasOwnProperty('combinations') ) {
+                            entity.combinations.map((combination, index) => {
+                                if ( combination.total_sugerido  ) {
+                                    if ( combination.precio_final === null || combination.precio_final == undefined) {
+                                        is_ok = false;
+                                    }
+                                }
+
+                            });
+                        }
+                    })
+                    if ( is_ok ) {
+                        console.log('is ok, time to register sale in database');
+                    }
+
                 },
             },
 
@@ -329,7 +410,38 @@
                         cantidad: this.FILTERED_AVAILABLE_PRODUCTS.length,
                         combinacion: this.SELECTED_COMBINATION,
                     };
-                }
+                },
+                TOTAL_UNITARIO_CESTA(){
+                    if ( this.CESTA.length > 1 ) {
+                        let total = 0
+                        this.CESTA.map(entity => {
+                            if ( entity.hasOwnProperty('combinations') ) {
+                                entity.combinations.map(com => {
+                                    com.products.map(prod => {
+                                        total += prod.single_cost_when_bought;
+                                    })
+                                })
+                            }
+                        })
+                        return total;
+                    }
+                },
+                TOTAL_SUGERIDO_CESTA(){
+                    if ( this.CESTA.length > 1 ) {
+                        let total = 0
+                        this.CESTA.map(entity => {
+                            if ( entity.hasOwnProperty('combinations') ) {
+                                entity.combinations.map(com => {
+                                    com.products.map(prod => {
+                                        total += prod.suggested_price;
+                                    })
+                                })
+                            }
+                        })
+                        return total;
+                    }
+                },
+
             },
 
         })
