@@ -145,8 +145,11 @@
                     this.ATRIBUTOS = await axios.post("{{ route('get_entidad') }}", obj).then(res => res.data);
                 },
                 registrarNuevaCompraEnBaseDeDatos: async function(){
-                    if ( this.NUEVA_COMPRA.precio_sugerido === null ) {
-                        console.log( 'por favor agrega el precio sugerido' );
+                    if ( this.NUEVA_COMPRA.entidadSeleccionada === null ||
+                         this.NUEVA_COMPRA.cantidad_de_unidades === null ||
+                         this.NUEVA_COMPRA.monto_total_pagado === null || 
+                         this.NUEVA_COMPRA.precio_sugerido === null ) {
+                        console.log( 'por rellena todos los campos' );
                         return;
                     }
 

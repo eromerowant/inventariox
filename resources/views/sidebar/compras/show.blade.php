@@ -23,7 +23,7 @@
 
             <div class="col-12">
                 
-                <p>Fecha: {{ $compra->created_at->format('d-m-Y') }}</p>
+                <p>Fecha: {{ $compra->created_at->format('d-m-Y H:i') }}</p>
                 <p>Monto Pagado: {{ $compra->final_amount }}</p>
                 <p>Cantidad de productos: {{ count($compra->products) }}</p>
                 @if ($compra->status === 'Pendiente')

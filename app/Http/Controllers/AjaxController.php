@@ -19,7 +19,21 @@ class AjaxController extends Controller
 
         return DataTables::eloquent( $sales )
                             ->filter(function ($query) use ($request) {
-                                //
+                                if ( $request->get('search_by_final_amount') ) {
+                                    $query->where('final_amount', $request->get('search_by_final_amount'));
+                                }
+                                if ( $request->get('search_by_final_cost') ) {
+                                    $query->where('final_cost', $request->get('search_by_final_cost'));
+                                }
+                                if ( $request->get('search_by_final_profit') ) {
+                                    $query->where('final_profit', $request->get('search_by_final_profit'));
+                                }
+                                if ( $request->get('search_by_month') ) {
+                                    $query->whereMonth('created_at', $request->get('search_by_month'));
+                                }
+                                if ( $request->get('search_by_anio') ) {
+                                    $query->whereYear('created_at', $request->get('search_by_anio'));
+                                }
                             })
                             ->addColumn('productos', function ($sale) {
                                 return $sale->products->count();

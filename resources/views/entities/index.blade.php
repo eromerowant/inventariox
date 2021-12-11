@@ -123,6 +123,10 @@
                     }
                     this.FILTERED_PRODUCTS = fitered_products_temp;
                 },
+
+                formatear_fecha(input){
+                    return moment(input, 'YYYY-MM-DD HH:II:SS').format("DD-MM-YYYY H:mm");
+                },
             },
 
         })

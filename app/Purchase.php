@@ -16,7 +16,7 @@ class Purchase extends Model
     ];
 
     protected $casts = [
-        'created_at'  => 'date:d-m-Y H:i',
+        // 'created_at'  => 'date:d-m-Y H:i',
     ];
 
     public function products()
