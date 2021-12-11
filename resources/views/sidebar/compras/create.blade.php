@@ -145,6 +145,11 @@
                     this.ATRIBUTOS = await axios.post("{{ route('get_entidad') }}", obj).then(res => res.data);
                 },
                 registrarNuevaCompraEnBaseDeDatos: async function(){
+                    if ( this.NUEVA_COMPRA.precio_sugerido === null ) {
+                        console.log( 'por favor agrega el precio sugerido' );
+                        return;
+                    }
+
                     let nueva_compra = {
                         ...this.NUEVA_COMPRA,
                         costoPorUnidad: this.monto_unitario,
@@ -160,6 +165,7 @@
                                 enlace_url: null,
                                 atributos_selected: {},
                             };
+                            console.log('compra registrada exitosamente');
                         }
                 },
             },

@@ -13,7 +13,10 @@
             <div class="row text-center">
                 <div class="col-12">
                     <h3>Venta ID: {{ $sale->id }}</h3>
-                    <p>Fecha: {{ $sale->created_at->format('d-m-Y H:i') }}</p>
+                    <p>Fecha: <strong>{{ $sale->created_at->format('d-m-Y H:i') }}</strong></p>
+                    <p>Precio Final: <strong>{{ number_format($sale->final_amount, 2, ",", ".") }}</strong></p>
+                    <p>Precio Costo: <strong>{{ number_format($sale->final_cost, 2, ",", ".") }}</strong></p>
+                    <p>Ganancia: <strong>{{ number_format($sale->final_profit, 2, ",", ".") }}</strong></p>
                 </div>
             </div>
 

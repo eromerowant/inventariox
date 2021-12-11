@@ -70,4 +70,6 @@ Route::get('entities/get_entities', 'EntityController@get_entities')->name('enti
 Route::get('/mostrar-ejemplares', 'EjemplareController@index')->name('VerEjemplares');
 Route::post('products/get_filtered_available_products', 'ProductController@get_filtered_available_products')->name('products.get_filtered_available_products');
 
+Route::delete('purchases/delete_purchase', 'PurchaseController@delete_purchase')->name('purchases.delete_purchase');
+
 Route::get('ajax/get_finished_sales', 'AjaxController@get_finished_sales')->name('ajax.get_finished_sales');

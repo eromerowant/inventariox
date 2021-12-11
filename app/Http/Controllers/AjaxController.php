@@ -28,13 +28,22 @@ class AjaxController extends Controller
                                 return $sale->created_at->format('d-m-Y H:i');
                             })
                             ->addColumn('action', function ($sale) {
-                                return '<a href="'.route('sales.show', ['sale_id' => $sale->id]).'" class="btn btn-sm my-1">Ver Detalle</a>';
+                                return '<a href="'.route('sales.show', ['sale_id' => $sale->id]).'" class="btn btn-sm btn-info">Ver Detalle</a>';
                             })
                             ->orderColumn('productos', function ($query, $order) {
                                 $query->orderBy('products_count', $order);
                             })
                             ->orderColumn('fecha', function ($query, $order) {
                                 $query->orderBy('created_at', $order);
+                            })
+                            ->editColumn('final_amount', function ($sale) {
+                                return number_format($sale->final_amount, 2, ",", ".");
+                            })
+                            ->editColumn('final_cost', function ($sale) {
+                                return number_format($sale->final_cost, 2, ",", ".");
+                            })
+                            ->editColumn('final_profit', function ($sale) {
+                                return number_format($sale->final_profit, 2, ",", ".");
                             })
                             ->toJson();
     }

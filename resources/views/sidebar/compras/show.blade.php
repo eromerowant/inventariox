@@ -6,9 +6,23 @@
 
     {{-- nueva-compra --}}
     <div class="container-fluid">
-        <div class="row text-center">
-            <div class="col">
+        <div class="row text-center mt-3">
+            <div class="col-4">
+                
+            </div>
+            <div class="col-4 text-center">
                 <h3>Compra id: {{ $compra->id }}</h3>
+            </div>
+            <div class="col-4 text-right">
+                <form action="{{ route('purchases.delete_purchase', ['compra_id' => $compra->id]) }}" method="POST">
+                    @csrf
+                    @method('delete')
+                    <input type="submit" value="Eliminar Compra" class="btn btn-sm btn-danger">
+                </form>
+            </div>
+
+            <div class="col-12">
+                
                 <p>Fecha: {{ $compra->created_at->format('d-m-Y') }}</p>
                 <p>Monto Pagado: {{ $compra->final_amount }}</p>
                 <p>Cantidad de productos: {{ count($compra->products) }}</p>
