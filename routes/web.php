@@ -28,6 +28,8 @@ Route::get('/compras/show/{compra_id}', 'SidebarController@comprasShow')->name('
 Route::get('/ventas/index', 'SidebarController@ventasIndex')->name('ventas.index');
 Route::get('/ventas/create', 'SidebarController@ventasCreate')->name('ventas.create');
 Route::get('/ventas/show/{venta_id}', 'SidebarController@ventasShow')->name('ventas.show');
+Route::post('/sales/register_new_sale', 'SaleController@register_new_sale')->name('sales.register_new_sale');
+Route::get('/sales/show/{sale_id}', 'SaleController@show')->name('sales.show');
 
 // inventario
 Route::get('/inventario/index', 'SidebarController@inventarioIndex')->name('inventario.index');

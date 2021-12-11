@@ -11,7 +11,9 @@ class CreateSalesTable extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->float('final_amount', 9, 2);
-            $table->string('status');
+            $table->float('final_cost', 9, 2)->nullable();
+            $table->float('final_profit', 9, 2)->nullable();
+            $table->string('status')->nullable();
 
             $table->softDeletes();
             $table->timestamps();

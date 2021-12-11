@@ -175,7 +175,16 @@
                                 </div>
                             </div>
                             <div class="row" v-if="CESTA.length > 1">
-                                <div class="col-12 text-right">
+                                <div class="col-3">
+                                    <p>Costo Cesta Total: <strong>@{{ TOTAL_UNITARIO_CESTA }}</strong></p>
+                                </div>
+                                <div class="col-3">
+                                    <p>Precio Cesta Total Sugerido: <strong>@{{ TOTAL_SUGERIDO_CESTA }}</strong></p>
+                                </div>
+                                <div class="col-3 text-right">
+                                    <span class="p-2 bg-primary rounded">PRECIO FINAL: <strong>@{{ PRECIO_FINAL_CESTA }}</strong></span>
+                                </div>
+                                <div class="col-3 text-right">
                                     <button @click="registrar_compra_en_db" class="btn btn-success" type="button">REGISTRAR COMPRA <i class="fas fa-check"></i></button>
                                 </div>
                             </div>
@@ -379,13 +388,14 @@
                         return entity;
                     });
                 },
-                registrar_compra_en_db(){
+                async registrar_compra_en_db(){
                     let is_ok=true;
                     this.CESTA.map(entity => {
                         if ( entity.hasOwnProperty('combinations') ) {
                             entity.combinations.map((combination, index) => {
                                 if ( combination.total_sugerido  ) {
                                     if ( combination.precio_final === null || combination.precio_final == undefined) {
+                                        console.log( 'falta agregar el precio final' );
                                         is_ok = false;
                                     }
                                 }
@@ -395,6 +405,16 @@
                     })
                     if ( is_ok ) {
                         console.log('is ok, time to register sale in database');
+                        let obj = {
+                            cesta: this.CESTA,
+                            precio_final_toda_la_cesta: this.PRECIO_FINAL_CESTA,
+                            total_unitario_cesta: this.TOTAL_UNITARIO_CESTA,
+                            total_ganancia: this.PRECIO_FINAL_CESTA - this.TOTAL_UNITARIO_CESTA,
+                        };
+                        let response = await axios.post("{{ route('sales.register_new_sale') }}", obj).then(res => res.data);
+                        let new_a_element = document.createElement("a");
+                        new_a_element.href = response.ruta;
+                        new_a_element.click();
                     }
 
                 },
@@ -435,6 +455,22 @@
                                     com.products.map(prod => {
                                         total += prod.suggested_price;
                                     })
+                                })
+                            }
+                        })
+                        return total;
+                    }
+                },
+                PRECIO_FINAL_CESTA(){
+                    if ( this.CESTA.length > 1 ) {
+                        let total = 0
+                        this.CESTA.map(entity => {
+                            if ( entity.hasOwnProperty('combinations') ) {
+                                entity.combinations.map(com => {
+                                    console.log(com);
+                                    if ( com.hasOwnProperty('precio_final') ) {
+                                        total += com.precio_final;
+                                    }
                                 })
                             }
                         })
