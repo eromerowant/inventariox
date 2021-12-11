@@ -135,16 +135,9 @@
                     { data: "final_cost", name: 'final_cost'},
                     { data: "final_profit", name: 'final_profit'},
                     { data: "fecha", name: 'fecha'},
-                    { data: 'action', orderable: false, searchable:     false, },
-
-                    // { data: "talleres"},
-                    // { data: "icon", orderable: false, searchable: false,
-                    //     render: function (data, type, row){
-                    //         return `<img width="50" class="img-fluid" src="${data}" alt="Icono de la destreza">`;
-                    //     },
-                    // },
-                    
+                    { data: 'action', orderable: false, searchable:false, },                    
                 ],
+                pageLength: 30,
                 language: {
                     url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
                 },
