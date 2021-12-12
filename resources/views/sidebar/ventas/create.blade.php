@@ -185,7 +185,7 @@
                                     <span class="p-2 bg-primary rounded">PRECIO FINAL: <strong>@{{ PRECIO_FINAL_CESTA }}</strong></span>
                                 </div>
                                 <div class="col-3 text-right">
-                                    <button @click="registrar_compra_en_db" class="btn btn-success" type="button">REGISTRAR COMPRA <i class="fas fa-check"></i></button>
+                                    <button @click="registrar_compra_en_db" class="btn btn-success" type="button">REGISTRAR VENTA <i class="fas fa-check"></i></button>
                                 </div>
                             </div>
                         </div>
