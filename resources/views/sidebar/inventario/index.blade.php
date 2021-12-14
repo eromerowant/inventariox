@@ -22,7 +22,7 @@
                                              <th>N°</th>
                                              <th>Id</th>
                                              <th>Nombre</th>
-                                             <th>Cantidad de Productos</th>
+                                             <th>Productos Disponibles</th>
                                              <th class="no_exportar">Acciones</th>
                                           </tr>
                                        </thead>
@@ -33,7 +33,7 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $entity->id }}</td>
                                                 <td>{{ $entity->name }}</td>
-                                                <td>{{ count($entity->products) }}</td>
+                                                <td>{{ count($entity->available_products) }}</td>
                                                 <td>
                                                     <a href="{{ route('entities.index', ['entity_id' => $entity->id]) }}" class="btn btn-info btn-sm">
                                                         Ver

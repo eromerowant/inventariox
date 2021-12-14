@@ -19,6 +19,10 @@ class Entity extends Model
     {
         return $this->hasMany('App\Product', 'entity_id');
     }
+    public function available_products()
+    {
+        return $this->hasMany('App\Product', 'entity_id')->where('status', 'Disponible');
+    }
 
     public function attributes()
     {
