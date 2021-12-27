@@ -102,8 +102,6 @@
                             <div class="row">
                                 <div class="col-12">
                                     <h2 class="h4"><strong>Cesta</strong></h2>
-                                    <p>Costo Cesta Total: <strong>@{{ TOTAL_UNITARIO_CESTA }}</strong></p>
-                                    <p>Precio Cesta Total Sugerido: <strong>@{{ TOTAL_SUGERIDO_CESTA }}</strong></p>
                                 </div>
                             </div>
                             <div class="row">
@@ -112,7 +110,7 @@
                                         <div class="card-body" v-if="index != 0">
                                             <div class="row mb-3">
                                                 <div class="col-6">
-                                                    <p class="h6"><strong>@{{ entity.entity_name }}</strong></p>
+                                                    <p class="h6"><strong class="bg-success">@{{ entity.entity_name }}</strong></p>
                                                 </div>
                                                 <div class="col-6 text-right">
                                                     <button @click="eliminar_entidad_de_la_cesta(index)" type="button" class="btn btn-danger btn-sm"><i class="fas fa-times-circle"></i></button>
@@ -121,13 +119,13 @@
                                             <div class="row">
                                                 <div class="col-12">
                                                     <div class="card" v-for="(combination, pos_combination) in entity.combinations">
-                                                        <div class="card-body">
+                                                        <div class="card-body bg-primary">
                                                             <div class="row mb-2">
                                                                 <div class="col-6">
                                                                     <span><strong>@{{ combination.name+", " }}</strong></span>
                                                                 </div>
                                                                 <div class="col-6 text-right">
-                                                                    <button @click="eliminar_combinacion_de_la_cesta(pos_combination)" type="button" class="btn btn-danger btn-sm"><i class="fas fa-times-circle"></i></button>
+                                                                    <button @click="eliminar_combinacion_de_la_cesta(pos_combination, entity.entity_name)" type="button" class="btn btn-danger btn-sm"><i class="fas fa-times-circle"></i></button>
                                                                 </div>
                                                             </div>
                                                             <div class="row">
@@ -380,9 +378,9 @@
                 eliminar_entidad_de_la_cesta(indice){
                     this.CESTA = this.CESTA.filter((entity, index) => index !== indice);
                 },
-                eliminar_combinacion_de_la_cesta(indice){
+                eliminar_combinacion_de_la_cesta(indice, entityName){
                     this.CESTA = this.CESTA.map(entity => {
-                        if ( entity.hasOwnProperty('combinations') ) {
+                        if ( entity.entity_name == entityName ) {
                             entity.combinations = entity.combinations.filter((combination, position) => position !== indice);
                         }
                         return entity;
@@ -467,7 +465,6 @@
                         this.CESTA.map(entity => {
                             if ( entity.hasOwnProperty('combinations') ) {
                                 entity.combinations.map(com => {
-                                    console.log(com);
                                     if ( com.hasOwnProperty('precio_final') ) {
                                         total += com.precio_final;
                                     }

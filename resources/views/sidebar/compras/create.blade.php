@@ -169,6 +169,7 @@
                                 atributos_selected: {},
                             };
                             console.log('compra registrada exitosamente');
+                            alert('compra registrada exitosamente');
                         }
                 },
             },
