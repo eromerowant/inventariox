@@ -137,7 +137,7 @@
                     { data: "fecha", name: 'fecha'},
                     { data: 'action', orderable: false, searchable:false, },                    
                 ],
-                pageLength: 30,
+                pageLength: 40,
                 language: {
                     url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
                 },

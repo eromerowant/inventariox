@@ -26,7 +26,7 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row" v-if="AVAILABLE_ATTRIBUTES.length > 0">
                 <div class="col-3" style="max-height: 60vh; overflow-y:auto;">
                     <div class="card">
                         <div class="card-body">
