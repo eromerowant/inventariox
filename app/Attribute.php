@@ -15,9 +15,9 @@ class Attribute extends Model
         'pivot', 'deleted_at', 'created_at', 'updated_at'
     ];
 
-    public function entities()
+    public function entity()
     {
-        return $this->belongsToMany(Entity::class, 'attribute_entities', 'attribute_id', 'entity_id');
+        return $this->belongsTo(Entity::class);
     }
 
     public function values()

@@ -26,6 +26,6 @@ class Entity extends Model
 
     public function attributes()
     {
-        return $this->belongsToMany(Attribute::class, 'attribute_entities', 'entity_id', 'attribute_id');
+        return $this->hasMany('App\Attribute', 'entity_id');
     }
 }

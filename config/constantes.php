@@ -39,22 +39,23 @@ return [
             'Transpore',
          ],
       ],
-      'Contenedor de pegamentos' => [
+      'Contenedor de Pegamentos' => [
          'Presentación' => [
             '1 unidad',
          ],
       ],
-      'Dispensador de agua' => [
+      'Dispensador de Agua' => [
          'Presentación' => [
             '250ml',
          ],
       ],
-      'Espejo verificador' => [
+      'Espejo Verificador' => [
          'Modelo' => [
-            'Plástico', 'Metal'
+            'Plástico', 
+            'Metal'
          ],
       ],
-      'Estuche porta pinzas' => [
+      'Estuche Porta Pinzas' => [
          'Presentación' => [
             '1 unidad',
          ],
@@ -90,12 +91,12 @@ return [
             '1 unidad',
          ],
       ],
-      'Paleta porta-pestañas' => [
+      'Paleta Porta Pestañas' => [
          'Presentación' => [
             '1 unidad',
          ],
       ],
-      'Pañitos sin pelusa' => [
+      'Pañitos Sin Pelusa' => [
          'Modelo' => [
             'Caja Acrílica', 
             'Formato Económico',
@@ -104,41 +105,33 @@ return [
       ],
       'Papel Alusa' => [
          'Modelo' => [
-            'Sin caja', 
-            'Con caja',
-            'No Aplica',
+            '1 Unidad', 
          ],
       ],
       'Parches de Hidrogel' => [
          'Presentación' => [
-            '50 unidades',
+            '1 Unidad',
          ],
       ],
       'Pegamentos' => [
          'Marca' => [
             'Sky',
             'Lady Black',
-            'Sky zone',
+            'Sky Zone',
             'Koreano',
             'Lomansa',
             'No Aplica',
          ],
          'Modelo' => [
-            'Tapa roja',
-            'Tapa negra',
+            'Tapa Roja',
+            'Tapa Negra',
             'No Aplica',
          ],
       ],
 
       'Peinetas Lifting' => [
          'Presentación' => [
-            'No Aplica',
-         ],
-      ],
-
-      'Peinetas Lifting' => [
-         'Presentación' => [
-            'No Aplica',
+            '1 Unidad',
          ],
       ],
 
@@ -152,12 +145,14 @@ return [
             'Mix',
             'Normal',
             'De Autofloración',
+            'De Colores',
             'No Aplica',
          ],
          'Curva' => [
             'D',
             'C',
             'CC',
+            'L',
             'No Aplica',
          ],
          'Grosor' => [
@@ -195,15 +190,15 @@ return [
 
       'Pestañas de Práctica' => [
          'Presentación' => [
-            '5 pares',
-            '10 pares',
+            '5 Pares',
+            '10 Pares',
             'No Aplica',
          ],
       ],
 
       'Piedra de Jade' => [
          'Presentación' => [
-            '1 unidad',
+            '1 Unidad',
             'No Aplica',
          ],
       ],
@@ -214,10 +209,9 @@ return [
             'No Aplica',
          ],
          'Forma' => [
+            '6S-SA Volumen Ruso',
             'Recta',
             'Curva',
-            'CS-11',
-            '6S-SA Volumen Ruso',
             'No Aplica',
          ],
          'Color' => [
@@ -225,21 +219,28 @@ return [
             'Plomo',
             'No Aplica',
          ],
-      ],
-      
-      'Pinza Lagrimal' => [
-         'Presentación' => [
+         'Modelo' => [
+            'SP-11',
+            'SP-15',
+            'CS-11',
+            'CS-15',
             'No Aplica',
          ],
       ],
       
-      'Portapegamento' => [
+      'Pinza Lagrimal' => [
          'Presentación' => [
-            '6 unidades',
+            '1 Unidad',
+         ],
+      ],
+
+      'Porta Pegamento' => [
+         'Presentación' => [
+            '1 unidad',
          ],
       ],
       
-      'Portapinzas' => [
+      'Porta Pinzas' => [
          'Presentación' => [
             '1 unidad',
          ],
@@ -270,7 +271,7 @@ return [
          ],
       ],
       
-      'Shampú' => [
+      'Shampoo' => [
          'Marca' => [
             'Funmix',
             'No Aplica',
@@ -281,21 +282,26 @@ return [
          ],
       ],
       
-      'Soplador de aire manual' => [
+      'Soplador de Aire Manual' => [
          'Presentación' => [
             '1 unidad',
          ],
       ],
       
-      'Sticker para pegamento' => [
+      'Sticker para Pegamento' => [
          'Presentación' => [
             '1 unidad',
          ],
       ],
       
-      'Super Buonder' => [
+      'Super Bonder' => [
          'Presentación' => [
-            '1 unidad',
+            '15 ml',
+            'No Aplica',
+         ],
+         'Marca' => [
+            'IB',
+            'No Aplica',
          ],
       ],
       

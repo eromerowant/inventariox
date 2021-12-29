@@ -32,7 +32,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12">
-                                    <h1 class="h5">Atributos</h1>
+                                    <h1 class="h5">Selecciona Los Atributos</h1>
                                 </div>
                             </div>
                             <div class="row">
@@ -101,7 +101,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12">
-                                    <h2 class="h4"><strong>Cesta</strong></h2>
+                                    <h2 class="h3 text-center"><strong>Cesta</strong></h2>
                                 </div>
                             </div>
                             <div class="row">
@@ -110,7 +110,7 @@
                                         <div class="card-body" v-if="index != 0">
                                             <div class="row mb-3">
                                                 <div class="col-6">
-                                                    <p class="h6"><strong class="bg-success">@{{ entity.entity_name }}</strong></p>
+                                                    <p class="h5"><strong class="bg-success">@{{ entity.entity_name }}</strong></p>
                                                 </div>
                                                 <div class="col-6 text-right">
                                                     <button @click="eliminar_entidad_de_la_cesta(index)" type="button" class="btn btn-danger btn-sm"><i class="fas fa-times-circle"></i></button>
@@ -128,9 +128,9 @@
                                                                     <button @click="eliminar_combinacion_de_la_cesta(pos_combination, entity.entity_name)" type="button" class="btn btn-danger btn-sm"><i class="fas fa-times-circle"></i></button>
                                                                 </div>
                                                             </div>
-                                                            <div class="row">
+                                                            <div class="row" style="overflow-y: auto; max-height: 100px;">
                                                                 <div class="col-12">
-                                                                    <p>Cantidad de productos: <strong>@{{ combination.products.length }}</strong></p>
+                                                                    <p class="h5">Cantidad de productos: <strong>@{{ combination.products.length }}</strong></p>
                                                                     <p v-for="(product, indice) in combination.products" :title="`id: ${product.id}`">
                                                                         @{{ indice+1 }}) 
                                                                         Costo Unitario: <strong>@{{ product.single_cost_when_bought }}</strong>, 
@@ -144,7 +144,7 @@
                                                                     <p>Total Unitario: <strong>@{{ combination.total_unitario }}</strong> </p>
                                                                 </div>
                                                                 <div class="col-3 text-center">
-                                                                    <p>Total Sugerido: <strong>@{{ combination.total_sugerido }}</strong> </p>
+                                                                    <p>Total Ideal: <strong>@{{ combination.total_sugerido }}</strong> </p>
                                                                 </div>
                                                                 <template v-if="combination.precio_final">
                                                                     <div class="col-3 text-center">
@@ -174,13 +174,13 @@
                             </div>
                             <div class="row" v-if="CESTA.length > 1">
                                 <div class="col-3">
-                                    <p>Costo Cesta Total: <strong>@{{ TOTAL_UNITARIO_CESTA }}</strong></p>
+                                    <p>CESTA (Costo Total): <strong>@{{ TOTAL_UNITARIO_CESTA }}</strong></p>
                                 </div>
                                 <div class="col-3">
-                                    <p>Precio Cesta Total Sugerido: <strong>@{{ TOTAL_SUGERIDO_CESTA }}</strong></p>
+                                    <p>CESTA (Precio Ideal): <strong>@{{ TOTAL_SUGERIDO_CESTA }}</strong></p>
                                 </div>
                                 <div class="col-3 text-right">
-                                    <span class="p-2 bg-primary rounded">PRECIO FINAL: <strong>@{{ PRECIO_FINAL_CESTA }}</strong></span>
+                                    <span class="p-2 bg-primary rounded">CESTA PRECIO FINAL: <strong>@{{ PRECIO_FINAL_CESTA }}</strong></span>
                                 </div>
                                 <div class="col-3 text-right">
                                     <button @click="registrar_compra_en_db" class="btn btn-success" type="button">REGISTRAR VENTA <i class="fas fa-check"></i></button>

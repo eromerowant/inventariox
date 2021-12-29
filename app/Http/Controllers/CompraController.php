@@ -80,18 +80,15 @@ class CompraController extends Controller
             $product->save();
 
             foreach ($request->get('atributos_selected') as $attr_name => $attr_value) {
-                $atributo_existente = Attribute::where('name', $attr_name)->first();
+                $atributo_existente = Attribute::where('name', $attr_name)->where('entity_id', $entity->id)->first();
     
                 if ( $atributo_existente ) {
                     $new_attribute = $atributo_existente;
-                    if ( !$new_attribute->entities->contains( $entity->id ) ) {
-                        $new_attribute->entities()->attach( $entity->id );
-                    }
                 } else {
-                    $new_attribute        = new Attribute();
-                    $new_attribute->name  = $attr_name;
+                    $new_attribute            = new Attribute();
+                    $new_attribute->name      = $attr_name;
+                    $new_attribute->entity_id = $entity->id;
                     $new_attribute->save();
-                    $new_attribute->entities()->attach( $entity->id );
                 }
     
                 $value_existente = Value::where('name', $attr_value)->where('attribute_id', $new_attribute->id)->first();

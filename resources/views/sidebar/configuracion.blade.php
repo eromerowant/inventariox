@@ -26,12 +26,12 @@
 
             <div class="row">
                 {{-- PASO UNO --}}
-                <div class="col-3">
+                <div class="col-4" style="overflow-y: auto; max-height: 390px;">
                     <!-- entidad REGISTRADA -->
                     <ul v-if="IS_WORD_IN_DB_ENTITIES">
                         <li v-for="(entity, index) in ENTITIES_LIKE_QUERY" :key="index">
                             <a href="#" @click.prevent="showRegisteredEntity(entity)">
-                                Entidad registrada: <strong>@{{ entity.name }} (@{{ entity.attributes.length }} atributos)</strong>
+                                Entidad: <strong>@{{ entity.name }}</strong>
                             </a>
                         </li>
                     </ul>
@@ -47,7 +47,7 @@
                     <ul v-else>
                         <li v-for="(entity, index) in ENTITIES_IN_DATABASE" :key="entity.id">
                             <a href="#" @click.prevent="showRegisteredEntity(entity)">
-                                Ver <strong>@{{ entity.name }} (@{{ entity.attributes.length }} atributos)</strong>
+                                Ver <strong>@{{ entity.name }}</strong>
                             </a>
                         </li>
                     </ul>
@@ -55,7 +55,7 @@
                 </div>
 
                 {{-- PASO DOS --}}
-                <div class="col-9">
+                <div class="col-8">
                     <!-- MOSTRAR ENTIDAD SELECCIONADA -->
                     <form v-if="SHOW_REGISTERED_ENTITY">
                         <div class="form-group text-center">
@@ -63,7 +63,6 @@
                             <div class="input-group mb-2">
                                 <input v-model="SELECTED_ENTITY.name" type="text" class="form-control text-center" readonly>
                                 <div class="input-group-append">
-                                    <a href="#" class="btn btn-outline-info btn-sm"><i class="fas fa-edit"></i></a>
                                     <a @click.prevent="removeEntityFromDatabase" href="#" class="btn btn-outline-danger btn-sm"><i class="fas fa-times-circle"></i></a>
                                 </div>
                             </div>
