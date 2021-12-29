@@ -11,6 +11,13 @@
         {{-- nueva-venta --}}
         <div class="container-fluid">
             <div class="row text-center">
+                <div class="col-12 text-right">
+                    <form action="{{ route('sales.delete_sale', ['sale_id' => $sale->id]) }}" method="POST">
+                        @csrf
+                        @method('delete')
+                        <input type="submit" class="btn btn-danger" value="Eliminar Venta">
+                    </form>
+                </div>
                 <div class="col-12">
                     <h3>Venta ID: {{ $sale->id }}</h3>
                     <p>Fecha: <strong>{{ $sale->created_at->format('d-m-Y H:i') }}</strong></p>

@@ -10,7 +10,9 @@ class PurchaseController extends Controller
     public function delete_purchase( Request $request )
     {
         $purchase = Purchase::where('id', $request->get('compra_id'))->first();
-        $purchase->products->delete();
+        foreach ($purchase->products as $product) {
+            $product->delete();
+        }
         $purchase->delete();
 
         return redirect()->route('compras.index');

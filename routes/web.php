@@ -71,5 +71,6 @@ Route::get('/mostrar-ejemplares', 'EjemplareController@index')->name('VerEjempla
 Route::post('products/get_filtered_available_products', 'ProductController@get_filtered_available_products')->name('products.get_filtered_available_products');
 
 Route::delete('purchases/delete_purchase', 'PurchaseController@delete_purchase')->name('purchases.delete_purchase');
+Route::delete('sales/delete_sale', 'SaleController@delete_sale')->name('sales.delete_sale');
 
 Route::get('ajax/get_finished_sales', 'AjaxController@get_finished_sales')->name('ajax.get_finished_sales');

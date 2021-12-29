@@ -54,4 +54,19 @@ class SaleController extends Controller
             'sale' => $sale,
         ]);
     }
+
+    public function delete_sale( Request $request )
+    {
+        $sale = Sale::where('id', $request->get('sale_id'))->first();
+        foreach ($sale->products as $product) {
+            $product->sale_id              = null; 
+            $product->final_sale_price     = null; 
+            $product->final_profit_on_sale = null; 
+            $product->status               = "Disponible"; 
+            $product->update(); 
+        }
+        $sale->delete();
+
+        return redirect()->route('ventas.index')->with('success', "Se eliminó correctamente la venta ".$request->get('sale_id')." y los productos ahora estan disponibles nuevamente.");
+    }
 }
