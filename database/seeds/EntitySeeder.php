@@ -2,15 +2,12 @@
 
 use Illuminate\Database\Seeder;
 
+use App\Entity;
+
 class EntitySeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        //
+        factory(Entity::class, 20)->create();
     }
 }

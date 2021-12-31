@@ -30,11 +30,12 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($compras_en_camino as $purchase)
+                                                
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $purchase->id }}</td>
                                                     <td>{{ $purchase->final_amount }}</td>
-                                                    <td>{{ count($purchase->products) }}</td>
+                                                    <td>{{ $purchase->products ? count($purchase->products) : null }}</td>
                                                     <td>
                                                         {{ count($purchase->products) > 0 ? $purchase->products[0]->entity->name : null }}
                                                     </td>
@@ -80,9 +81,9 @@
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $purchase->id }}</td>
                                                     <td>{{ $purchase->final_amount }}</td>
-                                                    <td>{{ count($purchase->products) }}</td>
+                                                    <td>{{ $purchase->products ? count($purchase->products) : null }}</td>
                                                     <td>
-                                                        {{ $purchase->products[0]->entity->name }}
+                                                        {{ count($purchase->products) > 0 ? $purchase->products[0]->entity->name : null }}
                                                     </td>
                                                     <td>{{ $purchase->created_at->format('d-m-Y H:i') }}</td>
                                                     <td>

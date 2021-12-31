@@ -15,8 +15,10 @@ class AjaxController extends Controller
         $relations = [
             'products',
         ];
-        $sales = Sale::where('status', 'Finalizada')->with( $relations )->withCount('products');
-
+        $sales = Sale::where('status', 'Finalizada')->with( $relations )
+                                                    ->withCount('products');
+                                                    
+        
         return DataTables::eloquent( $sales )
                             ->filter(function ($query) use ($request) {
                                 if ( $request->get('search_by_final_amount') ) {
@@ -44,12 +46,26 @@ class AjaxController extends Controller
                             ->addColumn('action', function ($sale) {
                                 return '<a href="'.route('sales.show', ['sale_id' => $sale->id]).'" class="btn btn-sm btn-info">Ver Detalle</a>';
                             })
+                            ->addColumn('total_ganancia', function ($sale) use ($sales) {
+                                $suma = $sales->sum('final_profit');
+                                return number_format($suma, 2, ",", ".")." (".$sales->count().")";
+                            })
+                            ->addColumn('total_venta', function ($sale) use ($sales) {
+                                $suma = $sales->sum('final_amount');
+                                return number_format($suma, 2, ",", ".")." (".$sales->count().")";
+                            })
+                            ->addColumn('total_costo', function ($sale) use ($sales) {
+                                $suma = $sales->sum('final_cost');
+                                return number_format($suma, 2, ",", ".")." (".$sales->count().")";
+                            })
+
                             ->orderColumn('productos', function ($query, $order) {
                                 $query->orderBy('products_count', $order);
                             })
                             ->orderColumn('fecha', function ($query, $order) {
                                 $query->orderBy('created_at', $order);
                             })
+                            
                             ->editColumn('final_amount', function ($sale) {
                                 return number_format($sale->final_amount, 2, ",", ".");
                             })

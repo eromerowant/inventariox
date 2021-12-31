@@ -21,8 +21,8 @@ class SidebarController extends Controller
 
     public function comprasIndex()
     {
-        $compras_en_camino = Purchase::where('status', "Pendiente")->get(); // Compras en camino
-        $compras_recibidas = Purchase::where('status', "Recibida")->get(); // Compras recibidas
+        $compras_en_camino = Purchase::where('status', "Pendiente")->with('products', 'products.entity')->get(); // Compras en camino
+        $compras_recibidas = Purchase::where('status', "Recibida")->with('products', 'products.entity')->get(); // Compras recibidas
 
         return view('sidebar.compras.index', [
             'compras_en_camino' => $compras_en_camino,

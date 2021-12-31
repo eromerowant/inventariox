@@ -88,9 +88,12 @@
                                             <tr>
                                                 <th>ID</th>
                                                 <th>Productos</th>
-                                                <th>Precio Venta</th>
-                                                <th>Precio Costo</th>
+                                                <th>Venta</th>
+                                                <th>Total Venta</th>
+                                                <th>Costo</th>
+                                                <th>Total Costo</th>
                                                 <th>Ganancia</th>
+                                                <th>Total Ganancia</th>
                                                 <th>Fecha</th>
                                                 <th class="no_exportar">Acciones</th>
                                             </tr>
@@ -129,15 +132,30 @@
                     }
                 },
                 columns: [
-                    { data: "id", name: 'id'},
-                    { data: "productos", name: 'productos'},
-                    { data: "final_amount", name: 'final_amount'},
-                    { data: "final_cost", name: 'final_cost'},
-                    { data: "final_profit", name: 'final_profit'},
-                    { data: "fecha", name: 'fecha'},
+                    { data: "id",             },
+                    { data: "productos",      },
+                    { data: "final_amount",   },
+                    { data: "total_venta",    
+                        render: function (data, type, row){
+                            return `<b>${data}</b>`;
+                        },
+                    },
+                    { data: "final_cost",     },
+                    { data: "total_costo",    
+                        render: function (data, type, row){
+                            return `<b>${data}</b>`;
+                        },
+                    },
+                    { data: "final_profit",   },
+                    { data: "total_ganancia", 
+                        render: function (data, type, row){
+                            return `<b>${data}</b>`;
+                        },
+                    },
+                    { data: "fecha",          },
                     { data: 'action', orderable: false, searchable:false, },                    
                 ],
-                pageLength: 40,
+                pageLength: 30,
                 language: {
                     url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
                 },
